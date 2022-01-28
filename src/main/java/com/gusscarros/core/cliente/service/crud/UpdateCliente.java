@@ -1,11 +1,11 @@
-package com.gusscarros.core.cliente.service;
+package com.gusscarros.core.cliente.service.crud;
 
 import com.gusscarros.core.cliente.model.Cliente;
 import com.gusscarros.core.cliente.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UpdateCliente extends Validacoes{
+public class UpdateCliente extends Validacoes {
 
     public UpdateCliente(ClienteRepository repository) {
         super(repository);

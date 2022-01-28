@@ -1,5 +1,10 @@
 package com.gusscarros.core.endereco.model;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Locale;
+
+@Document(value = "endereco")
 public class Endereco {
 
     private String cep;
@@ -9,11 +14,11 @@ public class Endereco {
     private String bairro;
 
     public Endereco(String cep, String uf, String localidade, String logradouro, String bairro) {
-        this.cep = cep;
-        this.uf = uf;
-        this.localidade = localidade;
-        this.logradouro = logradouro;
-        this.bairro = bairro;
+        this.cep = cep.toUpperCase(Locale.ROOT);
+        this.uf = uf.toUpperCase(Locale.ROOT);
+        this.localidade = localidade.toUpperCase(Locale.ROOT);
+        this.logradouro = logradouro.toUpperCase(Locale.ROOT);
+        this.bairro = bairro.toUpperCase(Locale.ROOT);
     }
 
     public String getCep() {

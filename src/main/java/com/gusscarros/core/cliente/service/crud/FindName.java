@@ -1,4 +1,4 @@
-package com.gusscarros.core.cliente.service;
+package com.gusscarros.core.cliente.service.crud;
 
 import com.gusscarros.core.cliente.model.Cliente;
 import com.gusscarros.core.cliente.repository.ClienteRepository;

@@ -1,7 +1,8 @@
 package com.gusscarros.core.cliente.controller;
 
 import com.gusscarros.core.cliente.model.Cliente;
-import com.gusscarros.core.cliente.service.*;
+import com.gusscarros.core.cliente.repository.ClienteRepository;
+import com.gusscarros.core.cliente.service.crud.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,19 +13,29 @@ import java.util.List;
 @RequestMapping("/usuarios")
 public class ClienteController {
 
-    @Autowired SaveCliente save;
-    @Autowired FindAllCliente findAllCliente;
-    @Autowired FindName findName;
-    @Autowired FindCpf findCpf;
-    @Autowired UpdateCliente updateCliente;
-    @Autowired DeleteCliente deleteCliente;
+     SaveCliente save;
+     FindAllCliente findAllCliente;
+     FindName findName;
+     FindCpf findCpf;
+     UpdateCliente updateCliente;
+     DeleteCliente deleteCliente;
 
+    public ClienteController(SaveCliente save, FindAllCliente findAllCliente, FindName findName,
+                             FindCpf findCpf, UpdateCliente updateCliente, DeleteCliente deleteCliente) {
+        this.save = save;
+        this.findAllCliente = findAllCliente;
+        this.findName = findName;
+        this.findCpf = findCpf;
+        this.updateCliente = updateCliente;
+        this.deleteCliente = deleteCliente;
+    }
 
+    @Autowired
+    ClienteRepository repository;
 
     @PostMapping("/save")
     public Cliente save(@Valid @RequestBody Cliente cliente){
-
-        return save.saveCliente(cliente);
+         return save.saveCliente(cliente);
     }
 
     @GetMapping("/all")
