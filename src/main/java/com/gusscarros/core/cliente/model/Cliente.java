@@ -1,22 +1,38 @@
 package com.gusscarros.core.cliente.model;
 
 import com.gusscarros.core.endereco.model.Endereco;
+import org.hibernate.validator.constraints.CreditCardNumber;
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.Locale;
 
 @Document(collection = "usuarios")
 public class Cliente {
 
 
-    @Id private  String id;
+    @Id
+    private  String id;
 
-    @NotEmpty(message = "Name can`t empty")
+    @NotBlank(message = "Nome inválido")
     private String nome;
+
+    @CPF(message = "CPF inválido")
     private String cpf;
-    private String dataDeNascimento;
+
+    @DateTimeFormat(pattern = "yyyy-dd-MM")
+    @NotNull
+    private LocalDate dataDeNascimento;
+
+    @CreditCardNumber(message = "Número Do cartão de crédito Inválido")
     private String cartao;
+
+
     private Endereco endereco;
     private String sexo;
     private boolean atividade;
@@ -34,7 +50,7 @@ public class Cliente {
     }
 
     public void setNome(String nome) {
-        this.nome = nome;
+        this.nome = nome.toUpperCase(Locale.ROOT);
     }
 
     public String getCpf() {
@@ -45,11 +61,11 @@ public class Cliente {
         this.cpf = cpf;
     }
 
-    public String getDataDeNascimento() {
+    public  LocalDate getDataDeNascimento() {
         return dataDeNascimento;
     }
 
-    public void setDataDeNascimento(String dataDeNascimento) {
+    public void setDataDeNascimento( LocalDate dataDeNascimento) {
         this.dataDeNascimento = dataDeNascimento;
     }
 
@@ -74,7 +90,7 @@ public class Cliente {
     }
 
     public void setSexo(String sexo) {
-        this.sexo = sexo;
+        this.sexo = sexo.toUpperCase(Locale.ROOT);
     }
 
     public boolean isAtividade() {

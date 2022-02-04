@@ -1,8 +1,6 @@
-package com.gusscarros.core.cliente.service;
+package com.gusscarros.core.cliente.service.crud;
 
-import com.gusscarros.core.cliente.model.Cliente;
 import com.gusscarros.core.cliente.repository.ClienteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
  abstract class Validacoes{
 
@@ -10,5 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
      public Validacoes(ClienteRepository repository) {
          this.repository = repository;
+     }
+
+     protected Validacoes() {
      }
  }
