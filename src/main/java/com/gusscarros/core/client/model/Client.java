@@ -1,4 +1,4 @@
-package com.gusscarros.core.cliente.model;
+package com.gusscarros.core.client.model;
 
 import com.gusscarros.core.endereco.model.Adress;
 import org.hibernate.validator.constraints.CreditCardNumber;
@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.Locale;
 
 @Document(collection = "user")
-public class User {
+public class Client {
 
 
     @Id

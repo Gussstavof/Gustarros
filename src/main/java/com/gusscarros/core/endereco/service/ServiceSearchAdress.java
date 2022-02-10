@@ -10,7 +10,6 @@ public class ServiceSearchAdress extends ServiceAdress {
 
     public Adress findEndereco(String cep){
         return restEndereco(cep);
-
     }
 
 }

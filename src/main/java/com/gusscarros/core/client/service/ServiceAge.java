@@ -1,6 +1,6 @@
-package com.gusscarros.core.cliente.service;
+package com.gusscarros.core.client.service;
 
-import com.gusscarros.core.cliente.model.User;
+import com.gusscarros.core.client.model.Client;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -9,12 +9,12 @@ import java.time.Period;
 @Service
 public class ServiceAge {
 
-    public int calculatorAge(User user){
-
+    public int calculatorAge(Client client){
         LocalDate localDate  = LocalDate.now();
-        LocalDate dataNascimento = user.getBirthDate();
+        LocalDate dataNascimento = client.getBirthDate();
         Period period = Period.between(dataNascimento, localDate);
-
         return period.getYears();
     }
+
+
 }
