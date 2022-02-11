@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.Period;
 
 @Service
-public class ServiceAge {
+public class AgeService {
 
     public int calculatorAge(Client client){
         LocalDate localDate  = LocalDate.now();

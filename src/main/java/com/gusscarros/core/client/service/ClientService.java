@@ -4,36 +4,25 @@ import com.gusscarros.core.client.exception.ExceptionBadRequest;
 import com.gusscarros.core.client.exception.ExceptionNotFound;
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
-import com.gusscarros.core.endereco.service.ServiceValidationAdress;
+import com.gusscarros.core.endereco.service.ValidationAdressService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@AllArgsConstructor
 @Service
-public class ServiceClient {
+public class ClientService {
 
-    ClientRepository repository;
-    ServiceValidationAdress validationAdress;
-    ServiceAge serviceAge;
-
-    public ServiceClient(ClientRepository repository, ServiceValidationAdress validationAdress
-            , ServiceAge serviceAge) {
-        this.repository = repository;
-        this.validationAdress = validationAdress;
-        this.serviceAge = serviceAge;
-
-    }
+    private final ClientRepository repository;
+    private final ValidationAdressService validationAdress;
+    private final SaveValidService saveValidService;
 
     public Client saveClient(Client client){
         client.setAdress( validationAdress.validationAdress(client.getAdress()));
-        if (serviceAge.calculatorAge(client) >= 18){
-            if (client.getAdress() != null) {
-                return repository.save(client);
-            }
-            throw new ExceptionBadRequest("Endereço Inválido");
-        }
-        throw  new  ExceptionBadRequest("Idade Inválida");
+
+        return saveValidService.checkAllClient(client);
     }
 
     public List<Client> allClient(){
@@ -60,7 +49,7 @@ public class ServiceClient {
             client.setAdress(validationAdress.validationAdress(newClient.getAdress()));
             client.setName(newClient.getName());
             return repository.save(client);
-        }).orElseThrow(() -> new ExceptionBadRequest("CPF doesn't exist"));
+        }).orElseThrow(() -> new ExceptionBadRequest("Client doesn't exist"));
     }
 
     public Client clientDelete(Client newClient, String cpf){
