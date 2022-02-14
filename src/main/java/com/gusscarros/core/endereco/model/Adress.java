@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 import java.util.Locale;
 
 @Data
-@Document(value = "endereco")
 public class Adress {
 
     private String cep;

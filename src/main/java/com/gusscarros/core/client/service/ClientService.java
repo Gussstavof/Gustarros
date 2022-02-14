@@ -6,6 +6,8 @@ import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
 import com.gusscarros.core.endereco.service.ValidationAdressService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpMessage;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +23,10 @@ public class ClientService {
 
     public Client saveClient(Client client){
         client.setAdress( validationAdress.validationAdress(client.getAdress()));
-
-        return saveValidService.checkAllClient(client);
+        if (saveValidService.returnStatus(client) == null){
+            return repository.save(client);
+        }
+         return saveValidService.returnStatus(client);
     }
 
     public List<Client> allClient(){
