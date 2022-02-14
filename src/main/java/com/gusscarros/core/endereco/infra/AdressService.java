@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public abstract class ServiceAdress {
+public abstract class AdressService {
 
     public Adress restEndereco(String cep){
         RestTemplate restTemplate = new RestTemplate();
