@@ -1,60 +1,68 @@
 package com.gusscarros.core.client.controller;
 
+import com.gusscarros.core.client.dto.ClientGetDto;
+import com.gusscarros.core.client.dto.ClientPatchDto;
+import com.gusscarros.core.client.dto.ClientPostDto;
+import com.gusscarros.core.client.dto.ClientPutDto;
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/clients")
 public class ClientController {
 
     @Autowired
     private ClientService clientService;
-
-
-
-    @PostMapping("/save")
-    public ResponseEntity<Client> save(@Valid @RequestBody Client client){
-         return ResponseEntity.ok(clientService.saveClient(client));
+    
+    @PostMapping
+    public ResponseEntity<ClientPostDto> save(@Valid @RequestBody ClientPostDto clientPostDto, URI location){
+        Client client = clientService.saveClient(clientPostDto.convert());
+        return ResponseEntity.created(location).body(clientPostDto);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Client>> getAll(){
-        return ResponseEntity.ok(clientService.allClient());
+    public ResponseEntity<List<ClientGetDto>> getAll(){
+        List<Client> client = clientService.allClient();
+        return ResponseEntity.ok(ClientGetDto.convertListDto(client));
     }
 
     @GetMapping("/searchname")
-    public ResponseEntity<List<Client> >findByName(@RequestParam("name") String name){
-
-        return ResponseEntity.ok(clientService.searchName(name));
-
+    public ResponseEntity<List<ClientGetDto> >findByName(@RequestParam("name") String name){
+        List<Client> client = clientService.searchName(name);
+        return ResponseEntity.ok(ClientGetDto.convertListDto(client));
     }
 
     @GetMapping("/searchcpf")
-    public ResponseEntity<Optional<Client>> findByCpf(@RequestParam("cpf") String cpf){
-
-        return ResponseEntity.ok(clientService.searchCpf(cpf));
-
+    public ResponseEntity<ClientGetDto> findByCpf(@RequestParam("cpf") String cpf){
+        Client client = clientService.searchCpf(cpf);
+        return ResponseEntity.ok(ClientGetDto.convertClientDto(client));
     }
 
-    @PutMapping("/update/{cpf}")
-    public ResponseEntity<Client> update(@RequestBody Client newClient, @PathVariable String cpf){
-
-        return ResponseEntity.ok(clientService.clientUpdate(newClient, cpf));
+    @PutMapping("/{cpf}")
+    public ResponseEntity<ClientPutDto> update(@Valid @RequestBody ClientPutDto newClient, @PathVariable String cpf){
+        Client client = clientService.clientUpdate(newClient.convert(),cpf);
+        return ResponseEntity.ok(new ClientPutDto(client));
     }
 
-    @PutMapping("/delete/{cpf}")
-    public ResponseEntity<Client> delete(@RequestBody Client newClient, @PathVariable String cpf){
-
-        return ResponseEntity.ok(clientService.clientDelete(newClient, cpf));
-
+    @PatchMapping("/{cpf}/{status}")
+    public ResponseEntity<ClientPatchDto> updateStatus(@PathVariable boolean status, @PathVariable String cpf){
+        Client client = clientService.clientUpdateStatus(status, cpf);
+        return ResponseEntity.ok(ClientPatchDto.convert(client));
     }
+
+    @DeleteMapping("/{cpf}")
+    public void delete(@PathVariable String cpf){
+        clientService.clientDelete(cpf);
+    }
+
 
 }

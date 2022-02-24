@@ -4,14 +4,11 @@ import com.gusscarros.core.client.exception.ExceptionBadRequest;
 import com.gusscarros.core.client.exception.ExceptionNotFound;
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
-import com.gusscarros.core.endereco.service.ValidationAdressService;
+import com.gusscarros.core.endereco.infra.ValidationAdressService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpMessage;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -33,11 +30,13 @@ public class ClientService {
         return repository.findByStatusTrue();
     }
 
-    public Optional<Client> searchCpf(String cpf){
+    public Client searchCpf(String cpf){
+        /*
         if (!repository.findByCpf(cpf).isPresent()){
             throw new ExceptionNotFound("CPF not found");
         }
-        return repository.findByCpf(cpf);
+         */
+        return repository.findByCpf(cpf).orElseThrow(() -> new ExceptionNotFound("CPF not found"));
     }
 
     public List<Client> searchName(String name){
@@ -56,11 +55,17 @@ public class ClientService {
         }).orElseThrow(() -> new ExceptionBadRequest("Client doesn't exist"));
     }
 
-    public Client clientDelete(Client newClient, String cpf){
-        return repository.findByCpf(cpf).map(client -> {
-            client.setStatus(newClient.isStatus());
+    public Client clientUpdateStatus(boolean status, String cpf){
+        if (repository.findByCpf(cpf).isPresent()){
+            Client client = repository.findByCpf(cpf).get();
+            client.setStatus(status);
             return repository.save(client);
-        }).orElseThrow(() -> new ExceptionBadRequest("Client doesn't exist"));
+        }
+        throw new ExceptionBadRequest("CPF doesn't exist");
+
     }
 
+    public void clientDelete(String cpf) {
+        repository.deleteByCpf(cpf);
+    }
 }

@@ -1,28 +1,25 @@
-package com.gusscarros.core.client.model;
+package com.gusscarros.core.client.dto;
 
+import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.endereco.model.Adress;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.CreditCardNumber;
 import org.hibernate.validator.constraints.br.CPF;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Locale;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "user")
-public class Client {
-
-
-    @Id
-    private  String id;
+public class ClientPostDto {
 
     @NotBlank(message = "Nome inválido")
     private String name;
@@ -41,28 +38,9 @@ public class Client {
     @NotBlank
     private String gender;
 
-    private boolean status = true;
-
     private Adress adress;
 
-    public Client(String name, String cpf, LocalDate birthDate, String creditCard, String gender, Adress adress) {
-        this.name = name;
-        this.cpf = cpf;
-        this.birthDate = birthDate;
-        this.creditCard = creditCard;
-        this.gender = gender;
-        this.adress = adress;
+    public  Client convert(){
+        return new Client(name.toUpperCase(Locale.ROOT), cpf, birthDate, creditCard, gender.toUpperCase(Locale.ROOT),adress);
     }
-
-    public Client(String name,String creditCard, Adress adress) {
-        this.name = name;
-        this.creditCard = creditCard;
-        this.adress = adress;
-    }
-
-    public Client(boolean status, String cpf) {
-        this.status = status;
-        this.cpf = cpf;
-    }
-
 }

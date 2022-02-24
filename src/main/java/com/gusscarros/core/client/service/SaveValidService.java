@@ -1,9 +1,9 @@
 package com.gusscarros.core.client.service;
 
 import com.gusscarros.core.client.exception.ExceptionBadRequest;
+import com.gusscarros.core.client.exception.ExceptionForbidden;
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
-import com.gusscarros.core.endereco.service.ValidationAdressService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ public class SaveValidService {
     }
 
     public boolean checkCpf(Client client){
-        return (!repository.findByCpf(client.getCpf()).isPresent())?true:false;
+        return repository.existsByCpf(client.getCpf());
     }
 
     public boolean checkAdress(Client client){
@@ -29,9 +29,9 @@ public class SaveValidService {
 
     public Client returnStatus(Client client){
         if (!checkAge(client)){
-            throw  new  ExceptionBadRequest("Invalid age");
+            throw  new ExceptionForbidden("Invalid age");
         }
-        else if (!checkCpf(client)){
+        else if (checkCpf(client)){
             throw new ExceptionBadRequest("Already used CPF");
         }
         else if ((!checkAdress(client))){
