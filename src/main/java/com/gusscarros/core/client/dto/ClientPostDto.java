@@ -3,6 +3,7 @@ package com.gusscarros.core.client.dto;
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.validation.AgeValidation;
 import com.gusscarros.core.endereco.model.Adress;
+import com.gusscarros.core.endereco.validation.AdressValidation;
 import lombok.*;
 import org.hibernate.validator.constraints.CreditCardNumber;
 import org.hibernate.validator.constraints.br.CPF;
@@ -19,10 +20,10 @@ import java.util.Locale;
 @NoArgsConstructor
 public class ClientPostDto {
 
-    @NotBlank(message = "Nome inválido")
+    @NotBlank(message = "Nome is empty")
     private String name;
 
-    @CPF(message = "CPF inválido")
+    @CPF(message = "invalid CPF")
     private String cpf;
 
     @DateTimeFormat(pattern = "yyyy-dd-MM")
@@ -31,12 +32,13 @@ public class ClientPostDto {
     private LocalDate birthDate;
 
     @NotBlank
-    @CreditCardNumber(message = "Número Do cartão de crédito Inválido")
+    @CreditCardNumber(message = "Invalid credit card number")
     private String creditCard;
 
     @NotBlank
     private String gender;
 
+    @AdressValidation(message = "Invalid CEP")
     private Adress adress;
 
     public  Client convert(){

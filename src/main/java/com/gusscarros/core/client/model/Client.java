@@ -24,10 +24,10 @@ public class Client {
     @Id
     private  String id;
 
-    @NotBlank(message = "Nome inválido")
+    @NotBlank(message = "Name is empty")
     private String name;
 
-    @CPF(message = "CPF inválido")
+    @CPF(message = "invalid CPF")
     private String cpf;
 
     @DateTimeFormat(pattern = "yyyy-dd-MM")
@@ -35,7 +35,7 @@ public class Client {
     private LocalDate birthDate;
 
     @NotBlank
-    @CreditCardNumber(message = "Número Do cartão de crédito Inválido")
+    @CreditCardNumber(message = "Invalid credit card number")
     private String creditCard;
 
     @NotBlank

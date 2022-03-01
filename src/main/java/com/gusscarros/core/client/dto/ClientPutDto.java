@@ -15,11 +15,11 @@ import java.util.Locale;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientPutDto {
-    @NotBlank(message = "Nome inválido")
+    @NotBlank(message = "Name is empty")
     private String name;
 
     @NotBlank
-    @CreditCardNumber(message = "Número Do cartão de crédito Inválido")
+    @CreditCardNumber(message = "Invalid credit card number ")
     private String creditCard;
 
     private Adress adress;

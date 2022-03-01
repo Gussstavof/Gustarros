@@ -6,7 +6,7 @@ import org.springframework.web.client.RestTemplate;
 
 
 @Service
-public class ValidationAdressService  {
+public class AdressInfra {
 
     public Adress validationAdress(Adress adress){
         String number = adress.getNumero();

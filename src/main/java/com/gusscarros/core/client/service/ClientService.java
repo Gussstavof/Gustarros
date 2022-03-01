@@ -4,7 +4,7 @@ import com.gusscarros.core.client.exception.ExceptionBadRequest;
 import com.gusscarros.core.client.exception.ExceptionNotFound;
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
-import com.gusscarros.core.endereco.infra.ValidationAdressService;
+import com.gusscarros.core.endereco.infra.AdressInfra;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class ClientService {
 
     private final ClientRepository repository;
-    private final ValidationAdressService validationAdress;
+    private final AdressInfra validationAdress;
     private final SaveValidService saveValidService;
 
     public Client saveClient(Client client){
