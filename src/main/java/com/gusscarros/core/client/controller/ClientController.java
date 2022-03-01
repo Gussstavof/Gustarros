@@ -7,7 +7,6 @@ import com.gusscarros.core.client.dto.ClientPutDto;
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,7 @@ public class ClientController {
     
     @PostMapping
     public ResponseEntity<ClientPostDto> save(@Valid @RequestBody ClientPostDto clientPostDto, URI location){
-        Client client = clientService.saveClient(clientPostDto.convert());
+        clientService.saveClient(clientPostDto.convert());
         return ResponseEntity.created(location).body(clientPostDto);
     }
 
@@ -48,15 +47,17 @@ public class ClientController {
     }
 
     @PutMapping("/{cpf}")
-    public ResponseEntity<ClientPutDto> update(@Valid @RequestBody ClientPutDto newClient, @PathVariable String cpf){
+    public ResponseEntity<ClientPutDto> update(@Valid @RequestBody ClientPutDto newClient, @PathVariable String cpf
+                                               ,URI uri){
         Client client = clientService.clientUpdate(newClient.convert(),cpf);
-        return ResponseEntity.ok(new ClientPutDto(client));
+        return ResponseEntity.created(uri).body(new ClientPutDto(client));
     }
 
     @PatchMapping("/{cpf}/{status}")
-    public ResponseEntity<ClientPatchDto> updateStatus(@PathVariable boolean status, @PathVariable String cpf){
+    public ResponseEntity<ClientPatchDto> updateStatus(@PathVariable boolean status, @PathVariable String cpf
+                                                       ,URI uri){
         Client client = clientService.clientUpdateStatus(status, cpf);
-        return ResponseEntity.ok(ClientPatchDto.convert(client));
+        return ResponseEntity.created(uri).body(ClientPatchDto.convert(client));
     }
 
     @DeleteMapping("/{cpf}")

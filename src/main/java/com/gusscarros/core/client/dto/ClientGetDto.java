@@ -2,10 +2,7 @@ package com.gusscarros.core.client.dto;
 
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.endereco.model.Adress;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,7 +10,7 @@ import java.util.stream.Collectors;
 
 
 @Builder
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientGetDto {
@@ -34,8 +31,8 @@ public class ClientGetDto {
         this.adress = client.getAdress();
     }
 
-    public static List<ClientGetDto> convertListDto(List<Client> client){
-        return client.stream().map(ClientGetDto::new).collect(Collectors.toList());
+    public static List<ClientGetDto> convertListDto(List<Client> clients){
+        return clients.stream().map(ClientGetDto::new).collect(Collectors.toList());
     }
 
     public static ClientGetDto convertClientDto(Client client){

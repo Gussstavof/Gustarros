@@ -31,12 +31,8 @@ public class ClientService {
     }
 
     public Client searchCpf(String cpf){
-        /*
-        if (!repository.findByCpf(cpf).isPresent()){
-            throw new ExceptionNotFound("CPF not found");
-        }
-         */
-        return repository.findByCpf(cpf).orElseThrow(() -> new ExceptionNotFound("CPF not found"));
+        return repository.findByCpf(cpf)
+                .orElseThrow(() -> new ExceptionNotFound("CPF not found"));
     }
 
     public List<Client> searchName(String name){
@@ -56,16 +52,20 @@ public class ClientService {
     }
 
     public Client clientUpdateStatus(boolean status, String cpf){
-        if (repository.findByCpf(cpf).isPresent()){
-            Client client = repository.findByCpf(cpf).get();
-            client.setStatus(status);
-            return repository.save(client);
-        }
-        throw new ExceptionBadRequest("CPF doesn't exist");
-
+        var client = findByCpfOrThrowNotFoundException(cpf);
+        client.setStatus(status);
+        return repository.save(client);
     }
 
     public void clientDelete(String cpf) {
-        repository.deleteByCpf(cpf);
+       /* if (!repository.existsByCpf(cpf)){
+            throw new ExceptionNotFound("CPF not found");
+        }
+        */
+        repository.deleteById(findByCpfOrThrowNotFoundException(cpf).getId());
+    }
+
+    private Client findByCpfOrThrowNotFoundException(final String cpf){
+        return repository.findByCpf(cpf).orElseThrow(() -> new ExceptionNotFound("CPF not found"));
     }
 }

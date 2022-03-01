@@ -60,9 +60,5 @@ public class Client {
         this.adress = adress;
     }
 
-    public Client(boolean status, String cpf) {
-        this.status = status;
-        this.cpf = cpf;
-    }
 
 }

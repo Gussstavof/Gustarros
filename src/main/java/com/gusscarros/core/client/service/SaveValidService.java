@@ -1,7 +1,7 @@
 package com.gusscarros.core.client.service;
 
 import com.gusscarros.core.client.exception.ExceptionBadRequest;
-import com.gusscarros.core.client.exception.ExceptionForbidden;
+import com.gusscarros.core.client.exception.ExceptionUnauthorized;
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ public class SaveValidService {
 
     public Client returnStatus(Client client){
         if (!checkAge(client)){
-            throw  new ExceptionForbidden("Invalid age");
+            throw  new ExceptionUnauthorized("Invalid age");
         }
         else if (checkCpf(client)){
             throw new ExceptionBadRequest("Already used CPF");
