@@ -12,26 +12,17 @@ import org.springframework.stereotype.Service;
 public class SaveValidService {
 
     private final ClientRepository repository;
-    private final AgeService ageService;
 
-
-    public boolean checkAge(Client client){
-        return ageService.calculatorAge(client) >= 18?true:false;
-    }
-
-    public boolean checkCpf(Client client){
+    private boolean checkCpf(Client client){
         return repository.existsByCpf(client.getCpf());
     }
 
-    public boolean checkAdress(Client client){
-        return client.getAdress() != null?true:false;
+    private boolean checkAdress(Client client){
+        return client.getAdress() != null;
     }
 
     public Client returnStatus(Client client){
-        if (!checkAge(client)){
-            throw  new ExceptionUnauthorized("Invalid age");
-        }
-        else if (checkCpf(client)){
+        if (checkCpf(client)){
             throw new ExceptionBadRequest("Already used CPF");
         }
         else if ((!checkAdress(client))){

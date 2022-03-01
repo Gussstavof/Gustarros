@@ -20,7 +20,7 @@ public class ValidationAdressService  {
     }
 
 
-     private Adress restEndereco(String cep){
+     private Adress restEndereco(final String cep){
         RestTemplate restTemplate = new RestTemplate();
          return restTemplate.getForObject("http://viacep.com.br/ws/"+cep+"/json/",
                  Adress.class);

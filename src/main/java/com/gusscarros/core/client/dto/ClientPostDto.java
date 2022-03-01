@@ -1,6 +1,7 @@
 package com.gusscarros.core.client.dto;
 
 import com.gusscarros.core.client.model.Client;
+import com.gusscarros.core.client.validation.AgeValidation;
 import com.gusscarros.core.endereco.model.Adress;
 import lombok.*;
 import org.hibernate.validator.constraints.CreditCardNumber;
@@ -26,6 +27,7 @@ public class ClientPostDto {
 
     @DateTimeFormat(pattern = "yyyy-dd-MM")
     @NotNull
+    @AgeValidation
     private LocalDate birthDate;
 
     @NotBlank

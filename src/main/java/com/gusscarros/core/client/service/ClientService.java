@@ -20,10 +20,10 @@ public class ClientService {
 
     public Client saveClient(Client client){
         client.setAdress( validationAdress.validationAdress(client.getAdress()));
-        if (saveValidService.returnStatus(client) == null){
+        if (returnStatusToClient(client) == null){
             return repository.save(client);
         }
-         return saveValidService.returnStatus(client);
+        return returnStatusToClient(client);
     }
 
     public List<Client> allClient(){
@@ -31,8 +31,7 @@ public class ClientService {
     }
 
     public Client searchCpf(String cpf){
-        return repository.findByCpf(cpf)
-                .orElseThrow(() -> new ExceptionNotFound("CPF not found"));
+        return findByCpfOrThrowNotFoundException(cpf);
     }
 
     public List<Client> searchName(String name){
@@ -58,14 +57,14 @@ public class ClientService {
     }
 
     public void clientDelete(String cpf) {
-       /* if (!repository.existsByCpf(cpf)){
-            throw new ExceptionNotFound("CPF not found");
-        }
-        */
         repository.deleteById(findByCpfOrThrowNotFoundException(cpf).getId());
     }
 
     private Client findByCpfOrThrowNotFoundException(final String cpf){
         return repository.findByCpf(cpf).orElseThrow(() -> new ExceptionNotFound("CPF not found"));
+    }
+
+    private Client returnStatusToClient(final Client client){
+        return saveValidService.returnStatus(client);
     }
 }
