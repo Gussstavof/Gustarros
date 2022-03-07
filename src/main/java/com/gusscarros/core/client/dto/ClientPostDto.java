@@ -1,35 +1,29 @@
-package com.gusscarros.core.client.model;
+package com.gusscarros.core.client.dto;
 
+import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.validation.AgeValidation;
 import com.gusscarros.core.client.validation.CpfValidation;
 import com.gusscarros.core.endereco.model.Adress;
 import com.gusscarros.core.endereco.validation.AdressValidation;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.CreditCardNumber;
 import org.hibernate.validator.constraints.br.CPF;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Locale;
 
+@Builder
 @Data
+@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Accessors(chain = true)
-@Document(collection = "user")
-public class Client {
+public class ClientPostDto {
 
-
-    @Id
-    private  String id;
-
-    @NotBlank(message = "Name is empty")
+    @NotBlank(message = "Nome is empty")
     private String name;
 
     @CPF(message = "invalid CPF")
@@ -48,9 +42,19 @@ public class Client {
     @NotBlank
     private String gender;
 
-    private boolean status = true;
-
     @AdressValidation
     private Adress adress;
+
+
+    public Client build(){
+        Client client = new Client()
+                .setName(this.name.toUpperCase(Locale.ROOT))
+                .setCpf(this.cpf)
+                .setBirthDate(this.birthDate)
+                .setCreditCard(this.creditCard)
+                .setGender(this.gender.toUpperCase(Locale.ROOT))
+                .setAdress(this.adress);
+        return client;
+    }
 
 }

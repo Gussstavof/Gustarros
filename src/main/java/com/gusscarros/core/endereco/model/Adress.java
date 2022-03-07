@@ -1,11 +1,9 @@
 package com.gusscarros.core.endereco.model;
 
 import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
-import java.util.Locale;
-
+@Accessors(chain = true)
 @Data
 public class Adress {
 
@@ -15,6 +13,5 @@ public class Adress {
     private String logradouro;
     private String bairro;
     private String numero;
-
 
 }

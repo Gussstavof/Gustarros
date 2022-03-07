@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseBody
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class ExceptionBadRequest extends RuntimeException {
+@ResponseStatus(HttpStatus.UNAUTHORIZED)
+public class ExceptionUnauthorized extends RuntimeException {
 
-    public ExceptionBadRequest(String message) {
+    public ExceptionUnauthorized(String message) {
         super(message);
     }
 }
