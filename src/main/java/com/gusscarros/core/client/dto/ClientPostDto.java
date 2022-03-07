@@ -2,9 +2,11 @@ package com.gusscarros.core.client.dto;
 
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.validation.AgeValidation;
+import com.gusscarros.core.client.validation.CpfValidation;
 import com.gusscarros.core.endereco.model.Adress;
 import com.gusscarros.core.endereco.validation.AdressValidation;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.CreditCardNumber;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,7 +17,8 @@ import java.time.LocalDate;
 import java.util.Locale;
 
 @Builder
-@Getter
+@Data
+@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientPostDto {
@@ -24,6 +27,7 @@ public class ClientPostDto {
     private String name;
 
     @CPF(message = "invalid CPF")
+    @CpfValidation
     private String cpf;
 
     @DateTimeFormat(pattern = "yyyy-dd-MM")
@@ -38,10 +42,19 @@ public class ClientPostDto {
     @NotBlank
     private String gender;
 
-    @AdressValidation(message = "Invalid CEP")
+    @AdressValidation
     private Adress adress;
 
-    public  Client convert(){
-        return new Client(name.toUpperCase(Locale.ROOT), cpf, birthDate, creditCard, gender.toUpperCase(Locale.ROOT),adress);
+
+    public Client build(){
+        Client client = new Client()
+                .setName(this.name.toUpperCase(Locale.ROOT))
+                .setCpf(this.cpf)
+                .setBirthDate(this.birthDate)
+                .setCreditCard(this.creditCard)
+                .setGender(this.gender.toUpperCase(Locale.ROOT))
+                .setAdress(this.adress);
+        return client;
     }
+
 }

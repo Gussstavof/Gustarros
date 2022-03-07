@@ -1,7 +1,9 @@
 package com.gusscarros.core.endereco.model;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
+@Accessors(chain = true)
 @Data
 public class Adress {
 
@@ -11,6 +13,5 @@ public class Adress {
     private String logradouro;
     private String bairro;
     private String numero;
-
 
 }

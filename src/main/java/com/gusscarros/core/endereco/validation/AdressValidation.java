@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = AdressService.class)
 public @interface AdressValidation {
-    String message() default "CPF invalid";
+    String message() default "CEP invalid";
 
     Class<?>[] groups() default {};
 

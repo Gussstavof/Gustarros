@@ -1,8 +1,7 @@
 package com.gusscarros.core.client.validation;
 
-import com.gusscarros.core.client.dto.ClientPostDto;
 import com.gusscarros.core.client.service.AgeService;
-import org.springframework.data.mongodb.core.mapping.Field;
+import com.gusscarros.core.client.service.CpfService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -15,14 +14,15 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = AgeService.class)
-public @interface AgeValidation {
-    String message() default "Age invalid";
+@Constraint(validatedBy = CpfService.class)
+public @interface CpfValidation {
+
+
+    String message() default "Already used CPF";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
 
     String value() default "";
 }

@@ -34,9 +34,4 @@ public class ClientGetDto {
     public static List<ClientGetDto> convertListDto(List<Client> clients){
         return clients.stream().map(ClientGetDto::new).collect(Collectors.toList());
     }
-
-    public static ClientGetDto convertClientDto(Client client){
-        return new ClientGetDto(client);
-    }
-
 }

@@ -1,17 +1,20 @@
 package com.gusscarros.core.client.dto;
 
 import com.gusscarros.core.client.model.Client;
+import com.gusscarros.core.client.validation.CpfValidation;
 import lombok.*;
 import org.hibernate.validator.constraints.br.CPF;
 
 @Builder
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientPatchDto {
 
     private boolean status;
+
     @CPF
+    @CpfValidation
     private String cpf;
 
     public ClientPatchDto(Client client) {
@@ -19,7 +22,4 @@ public class ClientPatchDto {
         this.status = client.isStatus();
     }
 
-    public static ClientPatchDto convert(Client client){
-        return new ClientPatchDto(client);
-    }
 }

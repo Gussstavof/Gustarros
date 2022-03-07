@@ -1,10 +1,8 @@
 package com.gusscarros.core.client.service;
 
-import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.validation.AgeValidation;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
@@ -16,8 +14,7 @@ public class AgeService implements ConstraintValidator<AgeValidation, LocalDate 
 
     private int calculatorAge(LocalDate birthDate){
         LocalDate localDate  = LocalDate.now();
-        LocalDate dataNascimento = birthDate;
-        Period period = Period.between(dataNascimento, localDate);
+        Period period = Period.between(birthDate, localDate);
         return period.getYears();
 
     }

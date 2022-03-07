@@ -1,9 +1,13 @@
 package com.gusscarros.core.client.model;
 
+import com.gusscarros.core.client.validation.AgeValidation;
+import com.gusscarros.core.client.validation.CpfValidation;
 import com.gusscarros.core.endereco.model.Adress;
+import com.gusscarros.core.endereco.validation.AdressValidation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.CreditCardNumber;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.data.annotation.Id;
@@ -17,6 +21,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 @Document(collection = "user")
 public class Client {
 
@@ -28,10 +33,12 @@ public class Client {
     private String name;
 
     @CPF(message = "invalid CPF")
+    @CpfValidation
     private String cpf;
 
     @DateTimeFormat(pattern = "yyyy-dd-MM")
     @NotNull
+    @AgeValidation
     private LocalDate birthDate;
 
     @NotBlank
@@ -43,22 +50,7 @@ public class Client {
 
     private boolean status = true;
 
+    @AdressValidation
     private Adress adress;
-
-    public Client(String name, String cpf, LocalDate birthDate, String creditCard, String gender, Adress adress) {
-        this.name = name;
-        this.cpf = cpf;
-        this.birthDate = birthDate;
-        this.creditCard = creditCard;
-        this.gender = gender;
-        this.adress = adress;
-    }
-
-    public Client(String name,String creditCard, Adress adress) {
-        this.name = name;
-        this.creditCard = creditCard;
-        this.adress = adress;
-    }
-
 
 }

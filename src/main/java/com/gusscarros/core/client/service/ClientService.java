@@ -1,5 +1,9 @@
 package com.gusscarros.core.client.service;
 
+import com.gusscarros.core.client.dto.ClientGetDto;
+import com.gusscarros.core.client.dto.ClientPatchDto;
+import com.gusscarros.core.client.dto.ClientPostDto;
+import com.gusscarros.core.client.dto.ClientPutDto;
 import com.gusscarros.core.client.exception.ExceptionBadRequest;
 import com.gusscarros.core.client.exception.ExceptionNotFound;
 import com.gusscarros.core.client.model.Client;
@@ -16,44 +20,50 @@ public class ClientService {
 
     private final ClientRepository repository;
     private final AdressInfra validationAdress;
-    private final SaveValidService saveValidService;
 
-    public Client saveClient(Client client){
-        client.setAdress( validationAdress.validationAdress(client.getAdress()));
-        if (returnStatusToClient(client) == null){
-            return repository.save(client);
-        }
-        return returnStatusToClient(client);
+
+    public ClientPostDto saveClient(ClientPostDto clientPostDto){
+
+        clientPostDto.setAdress(validationAdress.validationAdress(clientPostDto.getAdress()));
+        Client client = repository.save(clientPostDto.build());
+        repository.save(client);
+        return clientPostDto;
+
     }
 
-    public List<Client> allClient(){
-        return repository.findByStatusTrue();
+    public List<ClientGetDto> allClient(){
+        var client = repository.findByStatusTrue();
+        return ClientGetDto.convertListDto(client);
     }
 
-    public Client searchCpf(String cpf){
-        return findByCpfOrThrowNotFoundException(cpf);
+    public ClientGetDto searchCpf(String cpf){
+        var client = findByCpfOrThrowNotFoundException(cpf);
+        return new ClientGetDto(client);
     }
 
-    public List<Client> searchName(String name){
-        if (repository.findByNameContains(name).isEmpty()){
+    public List<ClientGetDto> searchName(String name){
+        var clients = repository.findByNameContains(name);
+        if (clients.isEmpty()){
             throw new ExceptionNotFound("Name not found");
         }
-        return repository.findByNameContains(name);
+        return ClientGetDto.convertListDto(clients);
     }
 
-    public Client clientUpdate(Client newClient, String cpf){
-        return repository.findByCpf(cpf).map(client -> {
+    public ClientPutDto clientUpdate(Client newClient, String cpf){
+        return repository.findById(findByCpfOrThrowNotFoundException(cpf).getId()).map(client -> {
             client.setCreditCard(newClient.getCreditCard());
             client.setAdress(validationAdress.validationAdress(newClient.getAdress()));
             client.setName(newClient.getName());
-            return repository.save(client);
+            repository.save(client);
+            return new ClientPutDto(client);
         }).orElseThrow(() -> new ExceptionBadRequest("Client doesn't exist"));
     }
 
-    public Client clientUpdateStatus(boolean status, String cpf){
+    public ClientPatchDto clientUpdateStatus(boolean status, String cpf){
         var client = findByCpfOrThrowNotFoundException(cpf);
         client.setStatus(status);
-        return repository.save(client);
+        repository.save(client);
+        return new ClientPatchDto(client);
     }
 
     public void clientDelete(String cpf) {
@@ -64,7 +74,4 @@ public class ClientService {
         return repository.findByCpf(cpf).orElseThrow(() -> new ExceptionNotFound("CPF not found"));
     }
 
-    private Client returnStatusToClient(final Client client){
-        return saveValidService.returnStatus(client);
-    }
 }
