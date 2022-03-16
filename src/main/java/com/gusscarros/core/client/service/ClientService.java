@@ -49,7 +49,8 @@ public class ClientService {
         return ClientGetDto.convertListDto(clients);
     }
 
-    public ClientPutDto clientUpdate(Client newClient, String cpf){
+    public ClientPutDto clientUpdate(ClientPutDto newClient, String cpf){
+        newClient.build();
         return repository.findById(findByCpfOrThrowNotFoundException(cpf).getId()).map(client -> {
             client.setCreditCard(newClient.getCreditCard());
             client.setAdress(validationAdress.validationAdress(newClient.getAdress()));

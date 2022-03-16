@@ -46,7 +46,7 @@ public class ClientController {
     public ResponseEntity<ClientPutDto> update(@Valid @RequestBody ClientPutDto newClient,
                                                @PathVariable String cpf
                                                ,URI uri){
-        return ResponseEntity.created(uri).body(clientService.clientUpdate(newClient.build(),cpf));
+        return ResponseEntity.created(uri).body(clientService.clientUpdate(newClient ,cpf));
     }
 
     @PatchMapping("/{cpf}/{status}")
