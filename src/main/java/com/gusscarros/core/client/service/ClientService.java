@@ -19,12 +19,12 @@ import java.util.List;
 public class ClientService {
 
     private final ClientRepository repository;
-    private final AdressInfra validationAdress;
+    private final AdressInfra adressInfra;
 
 
     public ClientPostDto saveClient(ClientPostDto clientPostDto){
 
-        clientPostDto.setAdress(validationAdress.validationAdress(clientPostDto.getAdress()));
+        //clientPostDto.setAdress(adressInfra.validationAdress(clientPostDto.getAdress()));
         Client client = repository.save(clientPostDto.build());
         repository.save(client);
         return clientPostDto;
@@ -53,7 +53,7 @@ public class ClientService {
         newClient.build();
         return repository.findById(findByCpfOrThrowNotFoundException(cpf).getId()).map(client -> {
             client.setCreditCard(newClient.getCreditCard());
-            client.setAdress(validationAdress.validationAdress(newClient.getAdress()));
+            client.setAdress(adressInfra.validationAdress(newClient.getAdress()));
             client.setName(newClient.getName());
             repository.save(client);
             return new ClientPutDto(client);
