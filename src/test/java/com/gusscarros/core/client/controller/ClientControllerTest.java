@@ -1,47 +1,48 @@
 package com.gusscarros.core.client.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gusscarros.core.client.dto.ClientGetDto;
+import com.gusscarros.core.client.dto.ClientPatchDto;
 import com.gusscarros.core.client.dto.ClientPostDto;
-import com.gusscarros.core.client.dto.ClientPutDto;
+import com.gusscarros.core.client.exception.ExceptionNotFound;
+import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
 import com.gusscarros.core.client.service.ClientService;
+import com.gusscarros.core.client.service.CpfService;
 import com.gusscarros.core.endereco.infra.AdressInfra;
 import com.gusscarros.core.endereco.model.Adress;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.stereotype.Repository;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = ClientController.class)
+@AutoConfigureMockMvc
 class ClientControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private ClientController clientController;
 
     @MockBean
-    ClientController clientController;
-
-    @Mock
     ClientService clientService;
 
     @Mock
@@ -50,7 +51,19 @@ class ClientControllerTest {
     @Mock
     AdressInfra adressInfra;
 
+    @Mock
+    CpfService cpfService;
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    private ClientGetDto clientGetDto;
     private ClientPostDto clientPostDto;
+    private List<Client> clients;
+    private ClientPatchDto clientPatchDto;
     private Adress adress;
 
     @BeforeEach
@@ -58,7 +71,7 @@ class ClientControllerTest {
 
         mockMvc = MockMvcBuilders.standaloneSetup(clientController).build();
 
-        adress = Adress.builder()
+         adress = Adress.builder()
                 .cep("03245110")
                 .numero("277")
                 .build();
@@ -72,51 +85,100 @@ class ClientControllerTest {
                 .gender("masculino")
                 .build();
 
+        clientGetDto = ClientGetDto.builder()
+                .name("Ferreira")
+                .adress(adress)
+                .birthDate(LocalDate.parse("2003-11-12"))
+                .cpf("56040769025")
+                .creditCard("5245759559334078")
+                .gender("masculino")
+                .build();
 
+        clientPatchDto = ClientPatchDto.builder()
+                .cpf("56040769025")
+                .status(true)
+                .build();
+
+        clients = Collections.singletonList(new Client()
+                .setName("Gustavo")
+                .setAdress(adress)
+                .setBirthDate(LocalDate.parse("2003-11-12"))
+                .setCpf("56040769025")
+                .setCreditCard("5245759559334078")
+                .setGender("Masculino"));
     }
 
 
     @Test
     void save() throws Exception {
-
-        Mockito.when(clientService.saveClient(clientPostDto))
-                .thenReturn(clientPostDto);
-        Mockito.when(clientRepository.existsByCpf(Mockito.any()))
+        when(clientRepository.existsByCpf(Mockito.any()))
                 .thenReturn(true);
-        Mockito.when(adressInfra.validationAdress(clientPostDto.getAdress()))
-                .thenReturn(clientPostDto.getAdress());
-        var json = """
-                {
-                    "name": "Gustavo Ferreira Alves",
-                    "cpf": "56040769025",
-                    "birthDate": "2003-11-12T02:00:00.000Z",
-                    "creditCard": "5245759559334078",
-                    "gender": "MASCULINO",
-                    "status": true,
-                    "adress": {
-                        "cep": "03245-110",
-                        "numero": "285"
-                    }
-                }
-                """;
+        when(adressInfra.validationAdress(Mockito.any()))
+                .thenReturn(adress);
+        when(clientService.saveClient(clientPostDto))
+                .thenReturn(clientPostDto);
+        when(cpfService.isValid(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/clients")
-                        .content(json)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/clients")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clientPostDto)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
-
     }
 
     @Test
-    void getAll() {
+    void getAll() throws Exception {
+        when(clientService.allClient())
+                .thenReturn(ClientGetDto.convertListDto(clients));
+
+        mockMvc.perform(get("/clients/all")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clients)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    void findByName() {
+    void findByName() throws Exception{
+        when(clientService.searchName("Gustavo"))
+                .thenReturn(ClientGetDto.convertListDto(clients));
+
+        mockMvc.perform(get("/clients/searchname?name=G")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clients)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+    @Test
+    void NameNotFound() throws Exception{
+        when(clientService.searchName(Mockito.any()))
+                .thenThrow(new ExceptionNotFound("Name not found"));
+
+        mockMvc.perform(get("/clients/searchname?name=")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clients)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+
+    @Test
+    void findByCpf() throws Exception{
+        when(clientService.searchCpf("56040769025"))
+                .thenReturn(clientGetDto);
+
+        mockMvc.perform(get("/clients/searchcpf?cpf=56040769025")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clientGetDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    void findByCpf() {
+    void cpfNotFound() throws Exception{
+        when(clientService.searchCpf(Mockito.any()))
+                .thenThrow(new ExceptionNotFound("CPF not found"));
+
+        mockMvc.perform(get("/clients/searchcpf?cpf=")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clientGetDto)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -124,10 +186,48 @@ class ClientControllerTest {
     }
 
     @Test
-    void updateStatus() {
+    void updateStatus() throws Exception {
+        when(clientService.clientUpdateStatus(false,"56040769025"))
+                .thenReturn(clientPatchDto);
+
+        mockMvc.perform(patch("/clients/56040769025/false")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clientPatchDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    void delete() {
+    void updateStatusCpfNotFound() throws Exception {
+        when(clientService.clientUpdateStatus(Boolean.parseBoolean(Mockito.any()),Mockito.any()))
+                .thenThrow(new ExceptionNotFound("CPF not found"));
+
+        mockMvc.perform(patch("/clients/00000/false")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clientPatchDto)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
+
+    @Test
+    void updateStatusChange() throws Exception {
+        when(clientService.clientUpdateStatus(false, "56040769025"))
+                .thenReturn( ClientPatchDto.builder()
+                        .cpf("56040769025")
+                        .status(false)
+                        .build());
+        mockMvc.perform(patch("/clients/56040769025/false")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clientPatchDto)))
+                .andExpect(MockMvcResultMatchers.content().string("{\"status\":false,\"cpf\":\"56040769025\"}"));
+    }
+
+    @Test
+    void deleteClientByCpf() throws Exception {
+        doNothing().when(clientService).clientDelete("56040769025");
+
+        mockMvc.perform(delete("/clients/56040769025")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clientPostDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
 }
