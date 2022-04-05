@@ -14,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Locale;
 
 @Builder
@@ -21,9 +22,9 @@ import java.util.Locale;
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientPostDto {
+public class ClientPostDto{
 
-    @NotBlank(message = "Nome is empty")
+    @NotBlank(message = "Name is empty")
     private String name;
 
     @CPF(message = "invalid CPF")
