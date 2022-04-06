@@ -1,28 +1,31 @@
 package com.gusscarros.core.client.validation;
 
-import com.gusscarros.core.client.service.AgeService;
-import com.gusscarros.core.client.service.CpfService;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.gusscarros.core.client.repository.ClientRepository;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = CpfService.class)
-public @interface CpfValidation {
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 
-    String message() default "Already used CPF";
+@Service
+public class CpfValidation implements ConstraintValidator<CpfValidator, String> {
 
-    Class<?>[] groups() default {};
+    @Autowired
+    public   ClientRepository repository;
 
-    Class<? extends Payload>[] payload() default {};
+    @Override
+    public void initialize(CpfValidator constraintAnnotation) {
+        ConstraintValidator.super.initialize(constraintAnnotation);
+    }
 
-    String value() default "";
+    @Override
+    public boolean isValid(String cpf, ConstraintValidatorContext constraintValidatorContext) {
+        return !repository.existsByCpf(cpf);
+
+    }
 }

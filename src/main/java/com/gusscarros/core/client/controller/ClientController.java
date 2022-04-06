@@ -5,7 +5,10 @@ import com.gusscarros.core.client.dto.ClientPatchDto;
 import com.gusscarros.core.client.dto.ClientPostDto;
 import com.gusscarros.core.client.dto.ClientPutDto;
 import com.gusscarros.core.client.service.ClientService;
+import com.gusscarros.core.client.validation.CpfValidation;
+import com.gusscarros.core.client.validation.CpfValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

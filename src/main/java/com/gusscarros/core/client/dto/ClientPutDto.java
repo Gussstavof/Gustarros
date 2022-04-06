@@ -2,7 +2,7 @@ package com.gusscarros.core.client.dto;
 
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.endereco.model.Adress;
-import com.gusscarros.core.endereco.validation.AdressValidation;
+import com.gusscarros.core.endereco.validation.AdressValidator;
 import lombok.*;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
@@ -24,7 +24,7 @@ public class ClientPutDto {
     @CreditCardNumber(message = "Invalid credit card number ")
     private String creditCard;
 
-    @AdressValidation
+    @AdressValidator
     private Adress adress;
 
     public Client build(){

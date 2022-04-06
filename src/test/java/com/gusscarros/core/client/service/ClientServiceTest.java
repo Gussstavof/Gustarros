@@ -191,8 +191,6 @@ public class ClientServiceTest {
         clientService.clientDelete(client.getCpf());
         verify(repository).deleteById(client.getId());
 
-
     }
-
 
 }

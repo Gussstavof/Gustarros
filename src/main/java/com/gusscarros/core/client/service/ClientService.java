@@ -4,7 +4,6 @@ import com.gusscarros.core.client.dto.ClientGetDto;
 import com.gusscarros.core.client.dto.ClientPatchDto;
 import com.gusscarros.core.client.dto.ClientPostDto;
 import com.gusscarros.core.client.dto.ClientPutDto;
-import com.gusscarros.core.client.exception.ExceptionBadRequest;
 import com.gusscarros.core.client.exception.ExceptionNotFound;
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
@@ -51,13 +50,13 @@ public class ClientService {
 
     public ClientPutDto clientUpdate(ClientPutDto newClient, String cpf){
         newClient.build();
-        return repository.findById(findByCpfOrThrowNotFoundException(cpf).getId()).map(client -> {
+        return repository.findByCpf(cpf).map(client -> {
             client.setCreditCard(newClient.getCreditCard());
             client.setAdress(adressInfra.validationAdress(newClient.getAdress()));
             client.setName(newClient.getName());
             repository.save(client);
             return new ClientPutDto(client);
-        }).orElseThrow(() -> new ExceptionBadRequest("Client doesn't exist"));
+        }).orElseThrow(() -> new ExceptionNotFound("Cpf not found"));
     }
 
     public ClientPatchDto clientUpdateStatus(boolean status, String cpf){

@@ -1,24 +1,31 @@
 package com.gusscarros.core.endereco.validation;
 
-import com.gusscarros.core.client.service.AgeService;
-import com.gusscarros.core.endereco.service.AdressService;
+import com.gusscarros.core.endereco.infra.AdressInfra;
+import com.gusscarros.core.endereco.model.Adress;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = AdressService.class)
-public @interface AdressValidation {
-    String message() default "CEP invalid";
+@Service
+public class AdressValidation implements ConstraintValidator<AdressValidator, Adress> {
 
-    Class<?>[] groups() default {};
+    @Autowired
+    private  AdressInfra adressInfra;
 
-    Class<? extends Payload>[] payload() default {};
+    public AdressValidation(){}
 
-    String value() default "";
+    @Override
+    public void initialize(AdressValidator constraintAnnotation) {
+        ConstraintValidator.super.initialize(constraintAnnotation);
+    }
+
+    @Override
+    public boolean isValid(Adress adress, ConstraintValidatorContext constraintValidatorContext) {
+       if (adressInfra.validationAdress(adress) != null){
+        return true;
+       }
+        return false;
+    }
 }

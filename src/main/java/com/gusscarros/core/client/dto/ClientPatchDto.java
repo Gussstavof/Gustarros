@@ -1,7 +1,7 @@
 package com.gusscarros.core.client.dto;
 
 import com.gusscarros.core.client.model.Client;
-import com.gusscarros.core.client.validation.CpfValidation;
+import com.gusscarros.core.client.validation.CpfValidator;
 import lombok.*;
 import org.hibernate.validator.constraints.br.CPF;
 
@@ -14,7 +14,7 @@ public class ClientPatchDto {
     private boolean status;
 
     @CPF
-    @CpfValidation
+    @CpfValidator
     private String cpf;
 
     public ClientPatchDto(Client client) {

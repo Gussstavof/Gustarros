@@ -1,9 +1,9 @@
 package com.gusscarros.core.client.model;
 
-import com.gusscarros.core.client.validation.AgeValidation;
-import com.gusscarros.core.client.validation.CpfValidation;
+import com.gusscarros.core.client.validation.AgeValidator;
+import com.gusscarros.core.client.validation.CpfValidator;
 import com.gusscarros.core.endereco.model.Adress;
-import com.gusscarros.core.endereco.validation.AdressValidation;
+import com.gusscarros.core.endereco.validation.AdressValidator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,8 +24,6 @@ import java.time.LocalDate;
 @Accessors(chain = true)
 @Document(collection = "user")
 public class Client {
-
-
     @Id
     private  String id;
 
@@ -33,12 +31,12 @@ public class Client {
     private String name;
 
     @CPF(message = "invalid CPF")
-    @CpfValidation
+    @CpfValidator
     private String cpf;
 
     @DateTimeFormat(pattern = "yyyy-dd-MM")
     @NotNull
-    @AgeValidation
+    @AgeValidator
     private LocalDate birthDate;
 
     @NotBlank
@@ -50,7 +48,7 @@ public class Client {
 
     private boolean status = true;
 
-    @AdressValidation
+    @AdressValidator
     private Adress adress;
 
 }
