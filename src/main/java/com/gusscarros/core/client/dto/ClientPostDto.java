@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.Locale;
 
 @Builder
-@Data
+@Getter
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,17 +44,5 @@ public class ClientPostDto{
 
     @AdressValidator
     private Adress adress;
-
-
-    public Client build(){
-        Client client = new Client()
-                .setName(this.name.toUpperCase(Locale.ROOT))
-                .setCpf(this.cpf)
-                .setBirthDate(this.birthDate)
-                .setCreditCard(this.creditCard)
-                .setGender(this.gender.toUpperCase(Locale.ROOT))
-                .setAdress(this.adress);
-        return client;
-    }
 
 }

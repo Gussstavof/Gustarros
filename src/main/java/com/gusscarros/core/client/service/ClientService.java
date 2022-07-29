@@ -1,9 +1,6 @@
 package com.gusscarros.core.client.service;
 
-import com.gusscarros.core.client.dto.ClientGetDto;
-import com.gusscarros.core.client.dto.ClientPatchDto;
-import com.gusscarros.core.client.dto.ClientPostDto;
-import com.gusscarros.core.client.dto.ClientPutDto;
+import com.gusscarros.core.client.dto.*;
 import com.gusscarros.core.client.exception.ExceptionNotFound;
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
@@ -22,11 +19,16 @@ public class ClientService {
     @Autowired
     private AdressInfra adressInfra;
 
+    @Autowired
+    private Mapper mapper;
+
 
     public ClientPostDto saveClient(ClientPostDto clientPostDto){
-        clientPostDto.setAdress(adressInfra.validationAdress(clientPostDto.getAdress()));
-        repository.save(clientPostDto.build());
-        return clientPostDto;
+        Client client = mapper.toClient(clientPostDto);
+
+        repository.save(client);
+
+        return mapper.toClientPostDto(client);
     }
 
     public List<ClientGetDto> allClient(){

@@ -5,6 +5,7 @@ import com.gusscarros.core.client.validation.CpfValidator;
 import com.gusscarros.core.endereco.model.Adress;
 import com.gusscarros.core.endereco.validation.AdressValidator;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
