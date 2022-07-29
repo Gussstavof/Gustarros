@@ -25,8 +25,7 @@ public class ClientService {
 
     public ClientPostDto saveClient(ClientPostDto clientPostDto){
         clientPostDto.setAdress(adressInfra.validationAdress(clientPostDto.getAdress()));
-        Client client = repository.save(clientPostDto.build());
-        repository.save(client);
+        repository.save(clientPostDto.build());
         return clientPostDto;
     }
 
