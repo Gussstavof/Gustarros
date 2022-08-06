@@ -1,9 +1,6 @@
 package com.gusscarros.core.client.service;
 
-import com.gusscarros.core.client.dto.ClientGetDto;
-import com.gusscarros.core.client.dto.ClientPatchDto;
-import com.gusscarros.core.client.dto.ClientPostDto;
-import com.gusscarros.core.client.dto.ClientPutDto;
+import com.gusscarros.core.client.dto.*;
 import com.gusscarros.core.client.exception.ExceptionNotFound;
 import com.gusscarros.core.client.model.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
@@ -15,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
@@ -28,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 public class ClientServiceTest {
     // I'll fix these tests!!!!!!!!
-/*
+
     @InjectMocks
     ClientService clientService;
 
@@ -38,13 +36,18 @@ public class ClientServiceTest {
     @Mock
     ClientRepository repository;
 
-    private   ClientPostDto clientPostDto;
+    @Mock
+    Mapper mapper;
 
-    private ClientPutDto clientPutDto;
+    private ClientDto clientDto;
+
+    private ClientDto clientSave;
+
+    private ClientDto clientPutDto;
 
     private ClientPatchDto clientPatchDto;
 
-    private ClientGetDto clientGetDto;
+    private Client client;
 
     private Adress adress;
 
@@ -61,7 +64,7 @@ public class ClientServiceTest {
                 .cep("03220100")
                 .numero("90")
                 .build();
-        clientPostDto = ClientPostDto.builder()
+        clientDto = ClientDto.builder()
                 .name("Ferreira")
                 .adress(adress)
                 .birthDate(LocalDate.parse("2003-11-12"))
@@ -69,47 +72,73 @@ public class ClientServiceTest {
                 .creditCard("5245759559334078")
                 .gender("masculino")
                 .build();
-        clientPutDto = ClientPutDto.builder()
-                .adress(adressUpdate)
-                .creditCard("5339474401406150")
+        clientPutDto = ClientDto.builder()
                 .name("Gustavo")
+                .adress(adressUpdate)
+                .birthDate(LocalDate.parse("2003-11-12"))
+                .cpf("56040769025")
+                .creditCard("5339474401406150")
+                .gender("masculino")
                 .build();
-    }
+        client = Client.builder()
+                .id("1")
+                .name("Gustavo")
+                .adress(adress)
+                .birthDate(LocalDate.parse("2003-11-12"))
+                .cpf("56040769025")
+                .creditCard("5245759559334078")
+                .gender("masculino")
+                .build();
 
+        clientPatchDto = ClientPatchDto.builder()
+                .cpf("56040769025")
+                .status(false)
+                .build();
 
-    private ClientPostDto clientSave(){
-        return  clientService.saveClient(clientPostDto);
+        clientSave = clientService.saveClient(clientDto);
     }
 
     @Test
     public void saveClientTest(){
-        when(repository.save(Mockito.any()))
+        clientService.saveClient(clientDto);
+        when(repository.save(client))
                 .thenReturn(Mockito.any());
         when(adressInfra.validationAdress(adress))
                 .thenReturn(adress);
+        when(mapper.toClientDto(client))
+                .thenReturn(clientDto);
+        when(mapper.toClient(clientDto))
+                .thenReturn(client);
 
-        assertSame( clientService.saveClient(clientPostDto), clientPostDto);
+        assertSame( clientService.saveClient(clientDto)
+                , clientDto);
     }
 
 
     @Test
     public void getAllStatusTrueTest(){
-         var client = clientSave();
+         var clients = Collections.singletonList(client);
+         var clientsDto = Collections.singletonList(clientDto);
 
-        when(repository.findByStatusTrue()).
-                thenReturn(Collections.singletonList(client.build()));
-        assertTrue(clientService.allClient().size()>0);
+        when(repository.findByStatusTrue())
+                .thenReturn(clients);
+        when(mapper.convertListDto(clients))
+                .thenReturn(clientsDto);
+       assertTrue(clientService.allClient().size()>0);
     }
 
     @Test
     public void getByCpfTest(){
-       var client = clientSave();
+       var cpf = "56040769025";
 
-        when(repository.findByCpf(Mockito.any()))
-                .thenReturn(Optional.ofNullable(client.build()));
+       when(repository.findByCpf(cpf))
+               .thenReturn(Optional.ofNullable(client));
+       when(mapper.toClientDto(client))
+               .thenReturn(clientDto);
         var clientCpf = clientService.searchCpf("56040769025");
 
-        assertEquals(clientCpf.getName(), "FERREIRA");
+
+        assertEquals(clientCpf.getName(), "Ferreira");
     }
 
     @Test
@@ -122,14 +151,17 @@ public class ClientServiceTest {
 
     @Test
     public void getByNameTest(){
-        var client = clientSave();
+        var clients = Collections.singletonList(mapper.toClient(clientDto));
+        var clientsDto = Collections.singletonList(clientDto);
 
-        when(repository.findByNameContains(Mockito.any())).
-                thenReturn(Collections.singletonList(client.build()));
+        when(repository.findByNameContains("Fer")).
+                thenReturn(clients);
+        when(mapper.convertListDto(clients))
+               .thenReturn(clientsDto);
 
-        var clientName = clientService.searchName("FER");
+        var clientName = clientService.searchName("Fer");
 
-        assertEquals(clientName.set(0, clientGetDto).getName(), "FERREIRA");
+        assertTrue(clientName.contains(clientDto));
     }
 
     @Test
@@ -142,30 +174,36 @@ public class ClientServiceTest {
 
     @Test
     public void updateClientTest(){
-        var client = clientSave();
 
         when(repository.findById(Mockito.any()))
-                .thenReturn(Optional.ofNullable(client.build()));
+                .thenReturn(Optional.ofNullable(client));
         when(repository.findByCpf(Mockito.any()))
-                .thenReturn(Optional.ofNullable(client.build()));
+                .thenReturn(Optional.ofNullable(client));
         when(repository.save(Mockito.any()))
                 .thenReturn(Mockito.any());
         when(adressInfra.validationAdress(adressUpdate))
                 .thenReturn(adressUpdate);
+        when(mapper.toClientDto(client))
+                .thenReturn(clientPutDto);
 
         var clientUpdate = clientService.clientUpdate(clientPutDto, "56040769025");
+
+        var name = clientUpdate.getName();
 
         assertSame("Gustavo", clientUpdate.getName());
     }
 
     @Test
     public void updateStatusTest(){
-        var client = clientSave();
 
-        when(repository.findByCpf(Mockito.any()))
-                .thenReturn(Optional.ofNullable(client.build()));
+        doReturn(Optional.ofNullable(client))
+                .when(repository)
+                .findByCpf("56040769025");
         when(repository.save(Mockito.any()))
-                .thenReturn(Mockito.any());
+                .thenReturn(client);
+        doReturn(clientPatchDto)
+                .when(mapper)
+                .cpfAndStatus(client);
 
         var clientStatus = clientService.clientUpdateStatus(false,"56040769025");
 
@@ -193,6 +231,6 @@ public class ClientServiceTest {
 
     }
 
- */
+
 
 }

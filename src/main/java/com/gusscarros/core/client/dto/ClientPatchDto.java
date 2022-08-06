@@ -6,7 +6,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.br.CPF;
 
 @Builder
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientPatchDto {

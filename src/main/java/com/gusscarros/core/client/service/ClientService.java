@@ -23,48 +23,51 @@ public class ClientService {
     private Mapper mapper;
 
 
-    public ClientPostDto saveClient(ClientPostDto clientPostDto){
-        Client client = mapper.toClient(clientPostDto);
+    public ClientDto saveClient(ClientDto clientDto){
+        Client client = mapper.toClient(clientDto);
 
         repository.save(client);
 
-        return mapper.toClientPostDto(client);
+        return mapper.toClientDto(client);
     }
 
-    public List<ClientGetDto> allClient(){
-        var client = repository.findByStatusTrue();
-        return ClientGetDto.convertListDto(client);
+    public List<ClientDto> allClient(){
+        var clients = repository.findByStatusTrue();
+        return mapper.convertListDto(clients);
     }
 
-    public ClientGetDto searchCpf(String cpf){
+    public ClientDto searchCpf(String cpf){
         var client = findByCpfOrThrowNotFoundException(cpf);
-        return new ClientGetDto(client);
+        return mapper.toClientDto(client);
     }
 
-    public List<ClientGetDto> searchName(String name){
+    public List<ClientDto> searchName(String name){
         var clients = repository.findByNameContains(name);
         if (clients.isEmpty()){
             throw new ExceptionNotFound("Name not found");
         }
-        return ClientGetDto.convertListDto(clients);
+        return mapper.convertListDto(clients);
     }
 
-    public ClientPutDto clientUpdate(ClientPutDto newClient, String cpf){
-        newClient.build();
+    public ClientDto clientUpdate(ClientDto clientDto, String cpf){
+
+
         return repository.findByCpf(cpf).map(client -> {
-            client.setCreditCard(newClient.getCreditCard());
-            client.setAdress(adressInfra.validationAdress(newClient.getAdress()));
-            client.setName(newClient.getName());
+            client.setCreditCard(clientDto.getCreditCard());
+            client.setAdress(adressInfra.validationAdress(clientDto.getAdress()));
+            client.setName(clientDto.getName());
             repository.save(client);
-            return new ClientPutDto(client);
+            return mapper.toClientDto(client);
         }).orElseThrow(() -> new ExceptionNotFound("Cpf not found"));
+
+
     }
 
     public ClientPatchDto clientUpdateStatus(boolean status, String cpf){
         var client = findByCpfOrThrowNotFoundException(cpf);
         client.setStatus(status);
         repository.save(client);
-        return new ClientPatchDto(client);
+         return mapper.cpfAndStatus(client);
     }
 
     public void clientDelete(String cpf) {

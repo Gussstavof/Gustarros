@@ -1,14 +1,9 @@
 package com.gusscarros.core.client.controller;
 
-import com.gusscarros.core.client.dto.ClientGetDto;
 import com.gusscarros.core.client.dto.ClientPatchDto;
-import com.gusscarros.core.client.dto.ClientPostDto;
-import com.gusscarros.core.client.dto.ClientPutDto;
+import com.gusscarros.core.client.dto.ClientDto;
 import com.gusscarros.core.client.service.ClientService;
-import com.gusscarros.core.client.validation.CpfValidation;
-import com.gusscarros.core.client.validation.CpfValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,31 +20,31 @@ public class ClientController {
     private ClientService clientService;
     
     @PostMapping
-    public ResponseEntity<ClientPostDto> save(@Valid @RequestBody ClientPostDto clientPostDto,
-                                              URI location){
-        return ResponseEntity.created(location).body(clientService.saveClient(clientPostDto));
+    public ResponseEntity<ClientDto> save(@Valid @RequestBody ClientDto clientDto,
+                                          URI location){
+        return ResponseEntity.created(location).body(clientService.saveClient(clientDto));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ClientGetDto>> getAll(){
+    public ResponseEntity<List<ClientDto>> getAll(){
         return ResponseEntity.ok(clientService.allClient());
     }
 
     @GetMapping("/searchname")
-    public ResponseEntity<List<ClientGetDto> >findByName(@RequestParam("name") String name){
+    public ResponseEntity<List<ClientDto> >findByName(@RequestParam("name") String name){
         return ResponseEntity.ok(clientService.searchName(name));
     }
 
     @GetMapping("/searchcpf")
-    public ResponseEntity<ClientGetDto> findByCpf(@RequestParam("cpf") String cpf){
+    public ResponseEntity<ClientDto> findByCpf(@RequestParam("cpf") String cpf){
         return ResponseEntity.ok(clientService.searchCpf(cpf));
     }
 
     @PutMapping("/{cpf}")
-    public ResponseEntity<ClientPutDto> update(@Valid @RequestBody ClientPutDto newClient,
+    public ResponseEntity<ClientDto> update(@Valid @RequestBody ClientDto clientDto,
                                                @PathVariable String cpf
                                                ,URI uri){
-        return ResponseEntity.created(uri).body(clientService.clientUpdate(newClient ,cpf));
+        return ResponseEntity.created(uri).body(clientService.clientUpdate(clientDto ,cpf));
     }
 
     @PatchMapping("/{cpf}/{status}")

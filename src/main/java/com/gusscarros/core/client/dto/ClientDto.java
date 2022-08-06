@@ -21,7 +21,7 @@ import java.util.Locale;
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientPostDto{
+public class ClientDto {
 
     @NotBlank(message = "Name is empty")
     private String name;
@@ -42,7 +42,18 @@ public class ClientPostDto{
     @NotBlank
     private String gender;
 
+    private boolean status;
+
     @AdressValidator
     private Adress adress;
+
+    public ClientDto(Client client) {
+        this.name = client.getName();
+        this.cpf = client.getCpf().substring(0,3).concat(".***.***-**");
+        this.birthDate = client.getBirthDate();
+        this.creditCard = client.getCreditCard().substring(12,16);
+        this.gender = client.getGender();
+        this.adress = client.getAdress();
+    }
 
 }
