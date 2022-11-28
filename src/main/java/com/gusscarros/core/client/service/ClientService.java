@@ -7,6 +7,7 @@ import com.gusscarros.core.client.repository.ClientRepository;
 import com.gusscarros.core.client.validation.CreateValidation;
 import com.gusscarros.core.address.infra.AddressInfra;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +33,8 @@ public class ClientService {
         return mapper.toClientDto(repository.save(mapper.toClient(clientDto)));
     }
 
-    public List<ClientDto> allClient(Pageable pageable){
-        return mapper.convertListDto(repository.findByStatusTrue(pageable));
+    public Page<ClientDto> allClient(Pageable pageable){
+        return mapper.convertPageDto(repository.findByStatusTrue(pageable));
     }
 
     public ClientDto searchCpf(String cpf){

@@ -3,10 +3,10 @@ package com.gusscarros.core.client.dto;
 import com.gusscarros.core.client.entity.Client;
 import com.gusscarros.core.address.infra.AddressInfra;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class Mapper {
@@ -36,10 +36,13 @@ public class Mapper {
                 .build();
     }
 
-    public List<ClientDto> convertListDto(List<Client> clients){
-        return clients.stream().map(ClientDto::new).collect(Collectors.toList());
+    public Page<ClientDto> convertPageDto(Page<Client> clients){
+        return clients.map(ClientDto::new);
     }
 
+    public List<ClientDto> convertListDto(List<Client> clients){
+        return clients.stream().map(ClientDto::new).toList();
+    }
     public ClientPatchDto cpfAndStatus(Client client){
         return ClientPatchDto.builder()
                 .cpf(client.getCpf())

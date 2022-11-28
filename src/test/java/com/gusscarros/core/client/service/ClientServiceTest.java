@@ -13,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -56,6 +58,10 @@ public class ClientServiceTest {
     Address addressUpdate;
 
     Pageable pageable;
+
+    Page<Client> clientPage;
+
+    Page<ClientDto> clientDtoPage;
 
 
     @BeforeEach
@@ -120,15 +126,16 @@ public class ClientServiceTest {
 
     @Test
     public void getAllStatusTrueTest(){
-         var clients = Collections.singletonList(client);
-         var clientsDto = Collections.singletonList(clientDto);
+         Page<Client> clients = new PageImpl<>(Collections.singletonList(client));
+         Page<ClientDto> clientsDto = new PageImpl<>(Collections.singletonList(clientDto));
 
         when(repository.findByStatusTrue(pageable))
                 .thenReturn(clients);
-        when(mapper.convertListDto(clients))
+        when(mapper.convertPageDto(clients))
                 .thenReturn(clientsDto);
 
-       assertTrue(clientService.allClient(pageable).contains(clientDto));
+        var result = clientService.allClient(pageable);
+       assertEquals(result, clientsDto);
     }
 
     @Test

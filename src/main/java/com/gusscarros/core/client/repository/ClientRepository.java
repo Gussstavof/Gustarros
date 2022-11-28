@@ -1,6 +1,7 @@
 package com.gusscarros.core.client.repository;
 
 import com.gusscarros.core.client.entity.Client;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -17,5 +18,6 @@ public interface ClientRepository extends MongoRepository<Client, String> {
 
     boolean existsByCpf(String cpf);
 
-    List<Client> findByStatusTrue(Pageable pageable);
+    Page<Client> findByStatusTrue(Pageable pageable);
+
 }
