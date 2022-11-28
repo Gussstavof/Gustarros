@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 public class ClientServiceTest {
-    // I'll fix these tests!!!!!!!!
 
     @InjectMocks
     ClientService clientService;
@@ -119,7 +118,6 @@ public class ClientServiceTest {
         assertSame( result, clientDto);
     }
 
-
     @Test
     public void getAllStatusTrueTest(){
          var clients = Collections.singletonList(client);
@@ -129,7 +127,7 @@ public class ClientServiceTest {
                 .thenReturn(clients);
         when(mapper.convertListDto(clients))
                 .thenReturn(clientsDto);
-       assertTrue(clientService.allClient().size()>0);
+       assertTrue(clientService.allClient().contains(clientDto));
     }
 
     @Test
@@ -143,7 +141,7 @@ public class ClientServiceTest {
         var clientCpf = clientService.searchCpf("56040769025");
 
 
-        assertEquals(clientCpf.getName(), "Ferreira");
+        assertSame(clientCpf, clientDto);
     }
 
     @Test
@@ -151,7 +149,8 @@ public class ClientServiceTest {
         when(repository.findByCpf(Mockito.any()))
                 .thenThrow(new NotFoundException("CPF not found"));
 
-        assertThrows(NotFoundException.class,() -> clientService.searchCpf("00000000000"));
+        assertThrows(NotFoundException.class,
+                () -> clientService.searchCpf("00000000000"));
     }
 
     @Test
@@ -174,7 +173,8 @@ public class ClientServiceTest {
         when(repository.findByCpf(Mockito.any()))
                 .thenThrow(new NotFoundException("Name not found"));
 
-        assertThrows(NotFoundException.class,() -> clientService.searchName("Gus"));
+        assertThrows(NotFoundException.class,
+                () -> clientService.searchName("Gus"));
     }
 
     @Test
