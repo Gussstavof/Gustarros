@@ -1,10 +1,8 @@
 package com.gusscarros.core.client.dto;
 
-import com.gusscarros.core.client.model.Client;
-import com.gusscarros.core.client.validation.AgeValidator;
-import com.gusscarros.core.client.validation.CpfValidator;
-import com.gusscarros.core.endereco.model.Adress;
-import com.gusscarros.core.endereco.validation.AdressValidator;
+import com.gusscarros.core.client.entity.Client;
+import com.gusscarros.core.client.constraints.AgeValidator;
+import com.gusscarros.core.address.entity.Address;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.CreditCardNumber;
@@ -14,7 +12,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Locale;
 
 @Builder
 @Getter
@@ -27,7 +24,6 @@ public class ClientDto {
     private String name;
 
     @CPF(message = "invalid CPF")
-    @CpfValidator
     private String cpf;
 
     @DateTimeFormat(pattern = "yyyy-dd-MM")
@@ -44,8 +40,7 @@ public class ClientDto {
 
     private boolean status;
 
-    @AdressValidator
-    private Adress adress;
+    private Address address;
 
     public ClientDto(Client client) {
         this.name = client.getName();
@@ -53,7 +48,7 @@ public class ClientDto {
         this.birthDate = client.getBirthDate();
         this.creditCard = client.getCreditCard().substring(12,16);
         this.gender = client.getGender();
-        this.adress = client.getAdress();
+        this.address = client.getAddress();
     }
 
 }

@@ -1,31 +1,21 @@
 package com.gusscarros.core.client.validation;
 
-
+import com.gusscarros.core.client.dto.ClientDto;
+import com.gusscarros.core.client.exception.CpfExistException;
 import com.gusscarros.core.client.repository.ClientRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
-
-@Service
-public class CpfValidation implements ConstraintValidator<CpfValidator, String> {
+@Component
+public class CpfValidation implements CreateValidation {
 
     @Autowired
-    public   ClientRepository repository;
+    ClientRepository clientRepository;
 
     @Override
-    public void initialize(CpfValidator constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
-    }
-
-    @Override
-    public boolean isValid(String cpf, ConstraintValidatorContext constraintValidatorContext) {
-        return !repository.existsByCpf(cpf);
-
+    public void validator(ClientDto clientDto) {
+        if (clientRepository.existsByCpf(clientDto.getCpf())){
+         throw new CpfExistException("Cpf already exist");
+        }
     }
 }

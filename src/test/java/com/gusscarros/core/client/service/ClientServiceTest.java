@@ -2,21 +2,22 @@ package com.gusscarros.core.client.service;
 
 import com.gusscarros.core.client.dto.*;
 import com.gusscarros.core.client.exception.ExceptionNotFound;
-import com.gusscarros.core.client.model.Client;
+import com.gusscarros.core.client.entity.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
-import com.gusscarros.core.endereco.infra.AdressInfra;
-import com.gusscarros.core.endereco.model.Adress;
+import com.gusscarros.core.client.validation.CreateValidation;
+import com.gusscarros.core.address.infra.AddressInfra;
+import com.gusscarros.core.address.entity.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -31,13 +32,16 @@ public class ClientServiceTest {
     ClientService clientService;
 
     @Mock
-    AdressInfra adressInfra;
+    AddressInfra addressInfra;
 
     @Mock
     ClientRepository repository;
 
     @Mock
     Mapper mapper;
+
+    @Mock
+    List<CreateValidation> createValidations;
 
     private ClientDto clientDto;
 
@@ -49,24 +53,24 @@ public class ClientServiceTest {
 
     private Client client;
 
-    private Adress adress;
+    private Address address;
 
-    private Adress adressUpdate;
+    private Address addressUpdate;
 
     @BeforeEach
     public  void setup(){
 
-        adress = Adress.builder()
+        address = Address.builder()
                 .cep("03245110")
                 .numero("277")
                 .build();
-        adressUpdate = Adress.builder()
+        addressUpdate = Address.builder()
                 .cep("03220100")
                 .numero("90")
                 .build();
         clientDto = ClientDto.builder()
                 .name("Ferreira")
-                .adress(adress)
+                .address(address)
                 .birthDate(LocalDate.parse("2003-11-12"))
                 .cpf("56040769025")
                 .creditCard("5245759559334078")
@@ -74,7 +78,7 @@ public class ClientServiceTest {
                 .build();
         clientPutDto = ClientDto.builder()
                 .name("Gustavo")
-                .adress(adressUpdate)
+                .address(addressUpdate)
                 .birthDate(LocalDate.parse("2003-11-12"))
                 .cpf("56040769025")
                 .creditCard("5339474401406150")
@@ -83,7 +87,7 @@ public class ClientServiceTest {
         client = Client.builder()
                 .id("1")
                 .name("Gustavo")
-                .adress(adress)
+                .address(address)
                 .birthDate(LocalDate.parse("2003-11-12"))
                 .cpf("56040769025")
                 .creditCard("5245759559334078")
@@ -102,16 +106,17 @@ public class ClientServiceTest {
     public void saveClientTest(){
         clientService.saveClient(clientDto);
         when(repository.save(client))
-                .thenReturn(Mockito.any());
-        when(adressInfra.validationAdress(adress))
-                .thenReturn(adress);
+                .thenReturn(client);
+        when(addressInfra.validationAdress(address))
+                .thenReturn(address);
         when(mapper.toClientDto(client))
                 .thenReturn(clientDto);
         when(mapper.toClient(clientDto))
                 .thenReturn(client);
-
-        assertSame( clientService.saveClient(clientDto)
-                , clientDto);
+        doNothing().when(createValidations)
+                .forEach(createValidation -> createValidation.validator(clientDto));
+        var result = clientService.saveClient(clientDto);
+        assertSame( result, clientDto);
     }
 
 
@@ -181,8 +186,8 @@ public class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(client));
         when(repository.save(Mockito.any()))
                 .thenReturn(Mockito.any());
-        when(adressInfra.validationAdress(adressUpdate))
-                .thenReturn(adressUpdate);
+        when(addressInfra.validationAdress(addressUpdate))
+                .thenReturn(addressUpdate);
         when(mapper.toClientDto(client))
                 .thenReturn(clientPutDto);
 
@@ -216,7 +221,7 @@ public class ClientServiceTest {
         Client client = new Client()
                 .setId("1")
                 .setName("Gustavo")
-                .setAdress(adress)
+                .setAddress(address)
                 .setBirthDate(LocalDate.parse("2003-11-12"))
                 .setCpf("56040769025")
                 .setCreditCard("5245759559334078")

@@ -2,9 +2,10 @@ package com.gusscarros.core.client.service;
 
 import com.gusscarros.core.client.dto.*;
 import com.gusscarros.core.client.exception.ExceptionNotFound;
-import com.gusscarros.core.client.model.Client;
+import com.gusscarros.core.client.entity.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
-import com.gusscarros.core.endereco.infra.AdressInfra;
+import com.gusscarros.core.client.validation.CreateValidation;
+import com.gusscarros.core.address.infra.AddressInfra;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,28 +18,25 @@ public class ClientService {
     private ClientRepository repository;
 
     @Autowired
-    private AdressInfra adressInfra;
+    private AddressInfra addressInfra;
 
     @Autowired
     private Mapper mapper;
 
+    @Autowired
+    List<CreateValidation> createValidations;
 
     public ClientDto saveClient(ClientDto clientDto){
-        Client client = mapper.toClient(clientDto);
-
-        repository.save(client);
-
-        return mapper.toClientDto(client);
+        createValidations.forEach(createValidation -> createValidation.validator(clientDto));
+        return mapper.toClientDto(repository.save(mapper.toClient(clientDto)));
     }
 
     public List<ClientDto> allClient(){
-        var clients = repository.findByStatusTrue();
-        return mapper.convertListDto(clients);
+        return mapper.convertListDto(repository.findByStatusTrue());
     }
 
     public ClientDto searchCpf(String cpf){
-        var client = findByCpfOrThrowNotFoundException(cpf);
-        return mapper.toClientDto(client);
+        return mapper.toClientDto(findByCpfOrThrowNotFoundException(cpf));
     }
 
     public List<ClientDto> searchName(String name){
@@ -51,10 +49,9 @@ public class ClientService {
 
     public ClientDto clientUpdate(ClientDto clientDto, String cpf){
 
-
         return repository.findByCpf(cpf).map(client -> {
             client.setCreditCard(clientDto.getCreditCard());
-            client.setAdress(adressInfra.validationAdress(clientDto.getAdress()));
+            client.setAddress(addressInfra.validationAdress(clientDto.getAddress()));
             client.setName(clientDto.getName());
             repository.save(client);
             return mapper.toClientDto(client);
@@ -67,7 +64,7 @@ public class ClientService {
         var client = findByCpfOrThrowNotFoundException(cpf);
         client.setStatus(status);
         repository.save(client);
-         return mapper.cpfAndStatus(client);
+        return mapper.cpfAndStatus(client);
     }
 
     public void clientDelete(String cpf) {

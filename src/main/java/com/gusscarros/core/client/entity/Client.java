@@ -1,9 +1,7 @@
-package com.gusscarros.core.client.model;
+package com.gusscarros.core.client.entity;
 
-import com.gusscarros.core.client.validation.AgeValidator;
-import com.gusscarros.core.client.validation.CpfValidator;
-import com.gusscarros.core.endereco.model.Adress;
-import com.gusscarros.core.endereco.validation.AdressValidator;
+import com.gusscarros.core.client.constraints.AgeValidator;
+import com.gusscarros.core.address.entity.Address;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,7 +31,6 @@ public class Client {
     private String name;
 
     @CPF(message = "invalid CPF")
-    @CpfValidator
     private String cpf;
 
     @DateTimeFormat(pattern = "yyyy-dd-MM")
@@ -50,9 +47,5 @@ public class Client {
 
     private boolean status = true;
 
-    @AdressValidator
-    private Adress adress;
-
-
-
+    private Address address;
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -20,8 +21,7 @@ public class ClientController {
     private ClientService clientService;
     
     @PostMapping
-    public ResponseEntity<ClientDto> save(@Valid @RequestBody ClientDto clientDto,
-                                          URI location){
+    public ResponseEntity<ClientDto> save(@Valid @RequestBody ClientDto clientDto, URI location){
         return ResponseEntity.created(location).body(clientService.saveClient(clientDto));
     }
 

@@ -5,12 +5,10 @@ import com.gusscarros.core.client.dto.ClientPatchDto;
 import com.gusscarros.core.client.dto.ClientDto;
 import com.gusscarros.core.client.dto.Mapper;
 import com.gusscarros.core.client.exception.ExceptionNotFound;
-import com.gusscarros.core.client.model.Client;
-import com.gusscarros.core.client.repository.ClientRepository;
+import com.gusscarros.core.client.entity.Client;
 import com.gusscarros.core.client.service.ClientService;
-import com.gusscarros.core.client.validation.CpfValidation;
-import com.gusscarros.core.endereco.infra.AdressInfra;
-import com.gusscarros.core.endereco.model.Adress;
+import com.gusscarros.core.client.constraints.AgeValidation;
+import com.gusscarros.core.address.entity.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,16 +45,10 @@ class ClientControllerTest {
     ClientService clientService;
 
     @Mock
-    ClientRepository clientRepository;
-
-    @Mock
-    AdressInfra adressInfra;
-
-    @Mock
-    CpfValidation cpfValidation;
-
-    @Mock
     Mapper mapper;
+
+    @Mock
+    AgeValidation ageValidation;
 
     @Autowired
     MockMvc mockMvc;
@@ -71,10 +63,6 @@ class ClientControllerTest {
 
     private ClientPatchDto clientPatchDto;
 
-    private Adress adress;
-
-
-
     @BeforeEach
     public void setup(){
 
@@ -82,14 +70,14 @@ class ClientControllerTest {
                 .standaloneSetup(clientController)
                 .build();
 
-        adress = Adress.builder()
+        Address address = Address.builder()
                 .cep("03245110")
                 .numero("277")
                 .build();
 
         clientDto = ClientDto.builder()
                 .name("Ferreira")
-                .adress(adress)
+                .address(address)
                 .birthDate(LocalDate.parse("2003-11-12"))
                 .cpf("56040769025")
                 .creditCard("5245759559334078")
@@ -103,38 +91,29 @@ class ClientControllerTest {
 
         clients = Collections.singletonList(new Client()
                 .setName("Gustavo")
-                .setAdress(adress)
+                .setAddress(address)
                 .setBirthDate(LocalDate.parse("2003-11-12"))
                 .setCpf("56040769025")
                 .setCreditCard("5245759559334078")
                 .setGender("Masculino"));
     }
 
-    /*
-    NullPointerException
+
     @Test
     void save() throws Exception {
-        when(clientRepository.existsByCpf(Mockito.any()))
-                .thenReturn(true);
-        when(adressInfra.validationAdress(Mockito.any()))
-                .thenReturn(adress);
-        when(clientService.saveClient(clientPostDto))
-                .thenReturn(clientPostDto);
-        when(cpfValidation.isValid(Mockito.any(), Mockito.any()))
-                .thenReturn(true);
+        when(clientService.saveClient(clientDto))
+                .thenReturn(clientDto);
 
         mockMvc.perform(post("/clients")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientPostDto)))
+                        .content(objectMapper.writeValueAsString(clientDto)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
-     */
 
     @Test
     @DisplayName("Get_clients_when_status_is_true_and_return_status_200")
     void getAll() throws Exception {
-
         doReturn(mapper.convertListDto(clients))
                 .when(clientService)
                 .allClient();
@@ -148,7 +127,6 @@ class ClientControllerTest {
     @Test
     @DisplayName("Search_client_by_name_and_return_status_200")
     void findByName() throws Exception{
-
         doReturn(mapper.convertListDto(clients))
                 .when(clientService)
                 .searchName("Gustavo");
@@ -195,8 +173,27 @@ class ClientControllerTest {
     }
 
     @Test
-    void update() {
+    void update() throws Exception {
+        when(clientService.clientUpdate(clientDto, "56040769025"))
+                .thenReturn(clientDto);
+
+        mockMvc.perform(put("/clients/56040769025")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(clientDto)))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
     }
+
+    @Test
+    void updateCpfNotFound() throws Exception {
+        when(clientService.clientUpdate(clientDto, "56040769026"))
+                .thenThrow(new ExceptionNotFound("CPF not found"));
+
+        mockMvc.perform(put("/clients/56040769026")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(clientDto)))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
 
     @Test
     @DisplayName("change_client's_status_to_false_and_return_status_200")

@@ -1,6 +1,6 @@
 package com.gusscarros.core.client.repository;
 
-import com.gusscarros.core.client.model.Client;
+import com.gusscarros.core.client.entity.Client;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
@@ -15,6 +15,6 @@ public interface ClientRepository extends MongoRepository<Client, String> {
     void deleteByCpf(String cpf);
 
     boolean existsByCpf(String cpf);
-    
+
     List<Client> findByStatusTrue();
 }

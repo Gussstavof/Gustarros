@@ -1,4 +1,4 @@
-package com.gusscarros.core.client.validation;
+package com.gusscarros.core.client.constraints;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

@@ -1,4 +1,4 @@
-package com.gusscarros.core.endereco.model;
+package com.gusscarros.core.address.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Adress {
+public class Address {
 
     private String cep;
     private String uf;

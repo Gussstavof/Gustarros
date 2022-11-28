@@ -1,13 +1,13 @@
-package com.gusscarros.core.client.validation;
+package com.gusscarros.core.client.constraints;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 import java.time.Period;
 
-@Service
+@Component
 public class AgeValidation implements ConstraintValidator<AgeValidator, LocalDate > {
 
 

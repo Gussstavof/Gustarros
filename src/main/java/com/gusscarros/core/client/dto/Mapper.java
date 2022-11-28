@@ -1,9 +1,7 @@
 package com.gusscarros.core.client.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gusscarros.core.client.model.Client;
-import com.gusscarros.core.endereco.infra.AdressInfra;
+import com.gusscarros.core.client.entity.Client;
+import com.gusscarros.core.address.infra.AddressInfra;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +12,7 @@ import java.util.stream.Collectors;
 public class Mapper {
 
     @Autowired
-    private AdressInfra adressInfra;
+    private AddressInfra addressInfra;
 
     public Client toClient(ClientDto clientDto){
         return Client.builder()
@@ -23,7 +21,7 @@ public class Mapper {
                 .birthDate(clientDto.getBirthDate())
                 .creditCard(clientDto.getCreditCard())
                 .gender(clientDto.getGender())
-                .adress(adressInfra.validationAdress(clientDto.getAdress()))
+                .address(addressInfra.validationAdress(clientDto.getAddress()))
                 .build();
     }
 
@@ -34,7 +32,7 @@ public class Mapper {
                 .birthDate(client.getBirthDate())
                 .creditCard(client.getCreditCard())
                 .gender(client.getGender())
-                .adress(adressInfra.validationAdress(client.getAdress()))
+                .address(addressInfra.validationAdress(client.getAddress()))
                 .build();
     }
 
