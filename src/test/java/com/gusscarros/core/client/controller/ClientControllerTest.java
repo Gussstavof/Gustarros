@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gusscarros.core.client.dto.ClientPatchDto;
 import com.gusscarros.core.client.dto.ClientDto;
 import com.gusscarros.core.client.dto.Mapper;
-import com.gusscarros.core.client.exception.ExceptionNotFound;
+import com.gusscarros.core.client.exception.NotFoundException;
 import com.gusscarros.core.client.entity.Client;
 import com.gusscarros.core.client.service.ClientService;
 import com.gusscarros.core.client.constraints.AgeValidation;
@@ -140,7 +140,7 @@ class ClientControllerTest {
     @DisplayName("Throw_exception_NameNotFound")
     void NameNotFound() throws Exception{
         when(clientService.searchName(Mockito.any()))
-                .thenThrow(new ExceptionNotFound("Name not found"));
+                .thenThrow(new NotFoundException("Name not found"));
 
         mockMvc.perform(get("/clients/searchname?name=")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -164,7 +164,7 @@ class ClientControllerTest {
     @DisplayName("search_Throw_exception_CpfNotFound")
     void cpfNotFound() throws Exception{
         when(clientService.searchCpf(Mockito.any()))
-                .thenThrow(new ExceptionNotFound("CPF not found"));
+                .thenThrow(new NotFoundException("CPF not found"));
 
         mockMvc.perform(get("/clients/searchcpf?cpf=")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -173,6 +173,7 @@ class ClientControllerTest {
     }
 
     @Test
+    @DisplayName("update_client_and_return_201")
     void update() throws Exception {
         when(clientService.clientUpdate(clientDto, "56040769025"))
                 .thenReturn(clientDto);
@@ -184,14 +185,15 @@ class ClientControllerTest {
     }
 
     @Test
+    @DisplayName("update_client_without_cpf_in_database_and_return_400")
     void updateCpfNotFound() throws Exception {
         when(clientService.clientUpdate(clientDto, "56040769026"))
-                .thenThrow(new ExceptionNotFound("CPF not found"));
+                .thenThrow(new NotFoundException("CPF not found"));
 
         mockMvc.perform(put("/clients/56040769026")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(clientDto)))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .content(objectMapper.writeValueAsString(null)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
 
@@ -211,7 +213,7 @@ class ClientControllerTest {
     @DisplayName("update_Throw_exception_CpfNotFound")
     void updateStatusCpfNotFound() throws Exception {
         when(clientService.clientUpdateStatus(Boolean.parseBoolean(Mockito.any()),Mockito.any()))
-                .thenThrow(new ExceptionNotFound("CPF not found"));
+                .thenThrow(new NotFoundException("CPF not found"));
 
         mockMvc.perform(patch("/clients/00000/false")
                         .contentType(MediaType.APPLICATION_JSON)

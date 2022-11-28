@@ -1,7 +1,7 @@
 package com.gusscarros.core.client.service;
 
 import com.gusscarros.core.client.dto.*;
-import com.gusscarros.core.client.exception.ExceptionNotFound;
+import com.gusscarros.core.client.exception.NotFoundException;
 import com.gusscarros.core.client.entity.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
 import com.gusscarros.core.client.validation.CreateValidation;
@@ -42,7 +42,7 @@ public class ClientService {
     public List<ClientDto> searchName(String name){
         var clients = repository.findByNameContains(name);
         if (clients.isEmpty()){
-            throw new ExceptionNotFound("Name not found");
+            throw new NotFoundException("Name not found");
         }
         return mapper.convertListDto(clients);
     }
@@ -55,7 +55,7 @@ public class ClientService {
             client.setName(clientDto.getName());
             repository.save(client);
             return mapper.toClientDto(client);
-        }).orElseThrow(() -> new ExceptionNotFound("Cpf not found"));
+        }).orElseThrow(() -> new NotFoundException("Cpf not found"));
 
 
     }
@@ -72,7 +72,7 @@ public class ClientService {
     }
 
     private Client findByCpfOrThrowNotFoundException(final String cpf){
-        return repository.findByCpf(cpf).orElseThrow(() -> new ExceptionNotFound("CPF not found"));
+        return repository.findByCpf(cpf).orElseThrow(() -> new NotFoundException("CPF not found"));
     }
 
 }

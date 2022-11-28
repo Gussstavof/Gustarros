@@ -1,7 +1,7 @@
 package com.gusscarros.core.client.service;
 
 import com.gusscarros.core.client.dto.*;
-import com.gusscarros.core.client.exception.ExceptionNotFound;
+import com.gusscarros.core.client.exception.NotFoundException;
 import com.gusscarros.core.client.entity.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
 import com.gusscarros.core.client.validation.CreateValidation;
@@ -149,9 +149,9 @@ public class ClientServiceTest {
     @Test
     public void getByCpfNotFoundTest(){
         when(repository.findByCpf(Mockito.any()))
-                .thenThrow(new ExceptionNotFound("CPF not found"));
+                .thenThrow(new NotFoundException("CPF not found"));
 
-        assertThrows(ExceptionNotFound.class,() -> clientService.searchCpf("00000000000"));
+        assertThrows(NotFoundException.class,() -> clientService.searchCpf("00000000000"));
     }
 
     @Test
@@ -172,9 +172,9 @@ public class ClientServiceTest {
     @Test
     public void getByNameNotFound(){
         when(repository.findByCpf(Mockito.any()))
-                .thenThrow(new ExceptionNotFound("Name not found"));
+                .thenThrow(new NotFoundException("Name not found"));
 
-        assertThrows(ExceptionNotFound.class,() -> clientService.searchName("Gus"));
+        assertThrows(NotFoundException.class,() -> clientService.searchName("Gus"));
     }
 
     @Test
