@@ -44,8 +44,6 @@ public class ClientServiceTest {
 
     private ClientDto clientDto;
 
-    private ClientDto clientSave;
-
     private ClientDto clientPutDto;
 
     private ClientPatchDto clientPatchDto;
@@ -97,8 +95,6 @@ public class ClientServiceTest {
                 .cpf("56040769025")
                 .status(false)
                 .build();
-
-        clientSave = clientService.saveClient(clientDto);
     }
 
     @Test
@@ -127,6 +123,7 @@ public class ClientServiceTest {
                 .thenReturn(clients);
         when(mapper.convertListDto(clients))
                 .thenReturn(clientsDto);
+
        assertTrue(clientService.allClient().contains(clientDto));
     }
 
@@ -138,8 +135,8 @@ public class ClientServiceTest {
                .thenReturn(Optional.ofNullable(client));
        when(mapper.toClientDto(client))
                .thenReturn(clientDto);
-        var clientCpf = clientService.searchCpf("56040769025");
 
+        var clientCpf = clientService.searchCpf("56040769025");
 
         assertSame(clientCpf, clientDto);
     }
@@ -179,7 +176,6 @@ public class ClientServiceTest {
 
     @Test
     public void updateClientTest(){
-
         when(repository.findById(Mockito.any()))
                 .thenReturn(Optional.ofNullable(client));
         when(repository.findByCpf(Mockito.any()))
@@ -193,14 +189,11 @@ public class ClientServiceTest {
 
         var clientUpdate = clientService.clientUpdate(clientPutDto, "56040769025");
 
-        var name = clientUpdate.getName();
-
-        assertSame("Gustavo", clientUpdate.getName());
+        assertSame(clientUpdate, clientPutDto);
     }
 
     @Test
     public void updateStatusTest(){
-
         doReturn(Optional.ofNullable(client))
                 .when(repository)
                 .findByCpf("56040769025");
@@ -213,7 +206,6 @@ public class ClientServiceTest {
         var clientStatus = clientService.clientUpdateStatus(false,"56040769025");
 
         assertFalse(clientStatus.isStatus());
-
     }
 
     @Test
@@ -230,12 +222,7 @@ public class ClientServiceTest {
                 .thenReturn(Optional.of(client));
         doNothing().when(repository).deleteById(client.getId());
 
-
         clientService.clientDelete(client.getCpf());
         verify(repository).deleteById(client.getId());
-
     }
-
-
-
 }
