@@ -4,6 +4,8 @@ import com.gusscarros.core.client.dto.ClientPatchDto;
 import com.gusscarros.core.client.dto.ClientDto;
 import com.gusscarros.core.client.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +28,8 @@ public class ClientController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ClientDto>> getAll(){
-        return ResponseEntity.ok(clientService.allClient());
+    public ResponseEntity<List<ClientDto>> getAll(@PageableDefault(sort = "{name}") Pageable pageable){
+        return ResponseEntity.ok(clientService.allClient(pageable));
     }
 
     @GetMapping("/searchname")

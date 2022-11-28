@@ -19,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,6 +44,9 @@ class ClientControllerTest {
     @Autowired
     private ClientController clientController;
 
+    @Autowired
+    private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
+
     @MockBean
     ClientService clientService;
 
@@ -56,18 +62,20 @@ class ClientControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    Pageable pageable;
 
-    private ClientDto clientDto;
+    ClientDto clientDto;
 
-    private List<Client> clients;
+    List<Client> clients;
 
-    private ClientPatchDto clientPatchDto;
+    ClientPatchDto clientPatchDto;
 
     @BeforeEach
     public void setup(){
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(clientController)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
                 .build();
 
         Address address = Address.builder()
@@ -116,7 +124,7 @@ class ClientControllerTest {
     void getAll() throws Exception {
         doReturn(mapper.convertListDto(clients))
                 .when(clientService)
-                .allClient();
+                .allClient(pageable);
 
         mockMvc.perform(get("/clients/all")
                         .contentType(MediaType.APPLICATION_JSON)

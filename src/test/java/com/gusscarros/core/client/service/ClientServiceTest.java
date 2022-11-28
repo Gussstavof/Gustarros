@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
@@ -42,17 +43,20 @@ public class ClientServiceTest {
     @Mock
     List<CreateValidation> createValidations;
 
-    private ClientDto clientDto;
+    ClientDto clientDto;
 
-    private ClientDto clientPutDto;
+    ClientDto clientPutDto;
 
-    private ClientPatchDto clientPatchDto;
+    ClientPatchDto clientPatchDto;
 
-    private Client client;
+    Client client;
 
-    private Address address;
+    Address address;
 
-    private Address addressUpdate;
+    Address addressUpdate;
+
+    Pageable pageable;
+
 
     @BeforeEach
     public  void setup(){
@@ -119,12 +123,12 @@ public class ClientServiceTest {
          var clients = Collections.singletonList(client);
          var clientsDto = Collections.singletonList(clientDto);
 
-        when(repository.findByStatusTrue())
+        when(repository.findByStatusTrue(pageable))
                 .thenReturn(clients);
         when(mapper.convertListDto(clients))
                 .thenReturn(clientsDto);
 
-       assertTrue(clientService.allClient().contains(clientDto));
+       assertTrue(clientService.allClient(pageable).contains(clientDto));
     }
 
     @Test
