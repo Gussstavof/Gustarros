@@ -44,17 +44,17 @@ public class ClientController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Page<ClientDto>> getAll(@PageableDefault(sort = "{name}") Pageable pageable){
+    public ResponseEntity<Page<ClientResponse>> getAll(@PageableDefault(sort = "{name}") Pageable pageable){
         return ResponseEntity.ok(clientService.allClient(pageable));
     }
 
     @GetMapping("/searchname")
-    public ResponseEntity<List<ClientDto> >findByName(@RequestParam("name") String name){
+    public ResponseEntity<List<ClientResponse> >findByName(@RequestParam("name") String name){
         return ResponseEntity.ok(clientService.searchName(name));
     }
 
     @GetMapping("/searchcpf")
-    public ResponseEntity<ClientDto> findByCpf(@RequestParam("cpf") String cpf){
+    public ResponseEntity<ClientResponse> findByCpf(@RequestParam("cpf") String cpf){
         return ResponseEntity.ok(clientService.searchCpf(cpf));
     }
 

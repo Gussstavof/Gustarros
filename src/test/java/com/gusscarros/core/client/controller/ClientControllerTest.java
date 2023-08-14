@@ -68,6 +68,10 @@ class ClientControllerTest {
 
     ClientDto clientDto;
 
+    ClientRequest clientRequest;
+
+    ClientResponse clientResponse;
+
     List<Client> clients;
 
     ClientPatchDto clientPatchDto;
@@ -106,6 +110,25 @@ class ClientControllerTest {
                 .setCpf("56040769025")
                 .setCreditCard("5245759559334078")
                 .setGender("Masculino"));
+
+        clientRequest = ClientRequest.builder()
+                .name("Ferreira")
+                .address(address)
+                .birthDate(LocalDate.parse("2003-11-12"))
+                .cpf("56040769025")
+                .creditCard("5245759559334078")
+                .gender("masculino")
+                .build();
+
+        clientResponse = ClientResponse.builder()
+                .name("Ferreira")
+                .address(address)
+                .birthDate(LocalDate.parse("2003-11-12"))
+                .cpf("56040769025")
+                .creditCard("5245759559334078")
+                .gender("masculino")
+                .build();
+
     }
 
 
@@ -124,7 +147,7 @@ class ClientControllerTest {
 
         mockMvc.perform(post("/clients")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientDto)))
+                        .content(objectMapper.writeValueAsString(clientRequest)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().json(response));
     }
@@ -134,24 +157,24 @@ class ClientControllerTest {
     @DisplayName("Get_clients_when_status_is_true_and_return_status_200")
     void getAll() throws Exception {
         when(clientService.allClient(pageable))
-                .thenReturn(new PageImpl<>(Collections.singletonList(clientDto)));
+                .thenReturn(new PageImpl<>(Collections.singletonList(clientResponse)));
 
         mockMvc.perform(get("/clients/all")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientDto)))
+                        .content(objectMapper.writeValueAsString(clientRequest)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     @DisplayName("Search_client_by_name_and_return_status_200")
     void findByName() throws Exception{
-        doReturn(mapper.convertListDto(clients))
+        doReturn(List.of(clientResponse))
                 .when(clientService)
                 .searchName("Gustavo");
 
         mockMvc.perform(get("/clients/searchname?name=Gustavo")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clients)))
+                        .content(objectMapper.writeValueAsString(List.of(clientResponse))))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
     @Test
@@ -162,7 +185,7 @@ class ClientControllerTest {
 
         mockMvc.perform(get("/clients/searchname?name=")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clients)))
+                        .content(objectMapper.writeValueAsString("")))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -170,11 +193,11 @@ class ClientControllerTest {
     @DisplayName("Search_client_by_cpf_and_return_status_200")
     void findByCpf() throws Exception{
         when(clientService.searchCpf("56040769025"))
-                .thenReturn(clientDto);
+                .thenReturn(clientResponse);
 
         mockMvc.perform(get("/clients/searchcpf?cpf=56040769025")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientDto)))
+                        .content(objectMapper.writeValueAsString(clientRequest)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -186,7 +209,7 @@ class ClientControllerTest {
 
         mockMvc.perform(get("/clients/searchcpf?cpf=")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientDto)))
+                        .content(objectMapper.writeValueAsString(clientRequest)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 

@@ -40,20 +40,22 @@ public class ClientService {
         return new ClientResponse(client).getCpf();
     }
 
-    public Page<ClientDto> allClient(Pageable pageable){
-        return mapper.convertPageDto(repository.findByStatusTrue(pageable));
+    public Page<ClientResponse> allClient(Pageable pageable){
+        return repository
+                .findByStatusTrue(pageable)
+                .map(ClientResponse::new);
     }
 
-    public ClientDto searchCpf(String cpf){
-        return mapper.toClientDto(findByCpfOrThrowNotFoundException(cpf));
+    public ClientResponse searchCpf(String cpf){
+        return new ClientResponse(findByCpfOrThrowNotFoundException(cpf));
     }
 
-    public List<ClientDto> searchName(String name){
+    public List<ClientResponse> searchName(String name){
         var clients = repository.findByNameContains(name);
         if (clients.isEmpty()){
             throw new NotFoundException("Name not found");
         }
-        return mapper.convertListDto(clients);
+        return clients.stream().map(ClientResponse::new).toList();
     }
 
     public ClientDto clientUpdate(ClientDto clientDto, String cpf){
