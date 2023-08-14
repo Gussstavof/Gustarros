@@ -65,11 +65,6 @@ public class ClientServiceTest {
 
     Pageable pageable;
 
-    Page<Client> clientPage;
-
-    Page<ClientDto> clientDtoPage;
-
-
     @BeforeEach
     public  void setup(){
 
@@ -122,13 +117,13 @@ public class ClientServiceTest {
                 .build();
 
         clientResponse = ClientResponse.builder()
-                .name("Ferreira")
+                .name("Gustavo")
                 .address(address)
                 .birthDate(LocalDate.parse("2003-11-12"))
-                .cpf("56040769025")
-                .creditCard("5245759559334078")
+                .cpf("560.***.***-**")
+                .creditCard("4078")
                 .gender("masculino")
-                .build();;
+                .build();
     }
 
     @Test
@@ -148,15 +143,17 @@ public class ClientServiceTest {
     @Test
     public void getAllStatusTrueTest(){
          Page<Client> clients = new PageImpl<>(Collections.singletonList(client));
-         Page<ClientDto> clientsDto = new PageImpl<>(Collections.singletonList(clientDto));
 
         when(repository.findByStatusTrue(pageable))
                 .thenReturn(clients);
-        when(mapper.convertPageDto(clients))
-                .thenReturn(clientsDto);
 
         var result = clientService.allClient(pageable);
-       assertEquals(result, clientsDto);
+
+        assertInstanceOf(Page.class, result);
+        assertTrue(result.stream()
+               .anyMatch(element -> element.equals(clientResponse))
+        );
+
     }
 
     @Test

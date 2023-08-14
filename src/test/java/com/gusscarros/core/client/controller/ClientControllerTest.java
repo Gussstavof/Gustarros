@@ -68,6 +68,10 @@ class ClientControllerTest {
 
     ClientDto clientDto;
 
+    ClientRequest clientRequest;
+
+    ClientResponse clientResponse;
+
     List<Client> clients;
 
     ClientPatchDto clientPatchDto;
@@ -106,6 +110,25 @@ class ClientControllerTest {
                 .setCpf("56040769025")
                 .setCreditCard("5245759559334078")
                 .setGender("Masculino"));
+
+        clientRequest = ClientRequest.builder()
+                .name("Ferreira")
+                .address(address)
+                .birthDate(LocalDate.parse("2003-11-12"))
+                .cpf("56040769025")
+                .creditCard("5245759559334078")
+                .gender("masculino")
+                .build();
+
+        clientResponse = ClientResponse.builder()
+                .name("Ferreira")
+                .address(address)
+                .birthDate(LocalDate.parse("2003-11-12"))
+                .cpf("56040769025")
+                .creditCard("5245759559334078")
+                .gender("masculino")
+                .build();
+
     }
 
 
@@ -124,7 +147,7 @@ class ClientControllerTest {
 
         mockMvc.perform(post("/clients")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientDto)))
+                        .content(objectMapper.writeValueAsString(clientRequest)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().json(response));
     }
@@ -134,11 +157,11 @@ class ClientControllerTest {
     @DisplayName("Get_clients_when_status_is_true_and_return_status_200")
     void getAll() throws Exception {
         when(clientService.allClient(pageable))
-                .thenReturn(new PageImpl<>(Collections.singletonList(clientDto)));
+                .thenReturn(new PageImpl<>(Collections.singletonList(clientResponse)));
 
         mockMvc.perform(get("/clients/all")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientDto)))
+                        .content(objectMapper.writeValueAsString(clientRequest)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 

@@ -40,8 +40,8 @@ public class ClientService {
         return new ClientResponse(client).getCpf();
     }
 
-    public Page<ClientDto> allClient(Pageable pageable){
-        return mapper.convertPageDto(repository.findByStatusTrue(pageable));
+    public Page<ClientResponse> allClient(Pageable pageable){
+        return repository.findByStatusTrue(pageable).map(ClientResponse::new);
     }
 
     public ClientDto searchCpf(String cpf){

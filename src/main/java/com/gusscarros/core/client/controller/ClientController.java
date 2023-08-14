@@ -44,7 +44,7 @@ public class ClientController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Page<ClientDto>> getAll(@PageableDefault(sort = "{name}") Pageable pageable){
+    public ResponseEntity<Page<ClientResponse>> getAll(@PageableDefault(sort = "{name}") Pageable pageable){
         return ResponseEntity.ok(clientService.allClient(pageable));
     }
 
