@@ -1,13 +1,11 @@
 package com.gusscarros.core.client.service;
 
-import com.gusscarros.core.client.dto.*;
-import com.gusscarros.core.client.dto.request.ClientRequest;
-import com.gusscarros.core.client.dto.response.ClientResponse;
+import com.gusscarros.core.client.models.request.ClientRequest;
+import com.gusscarros.core.client.models.response.ClientResponse;
 import com.gusscarros.core.client.exception.NotFoundException;
-import com.gusscarros.core.client.entity.Client;
+import com.gusscarros.core.client.models.entity.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
 import com.gusscarros.core.client.validation.CreateValidation;
-import com.gusscarros.core.address.infra.AddressInfra;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,9 +18,6 @@ public class ClientService {
 
     @Autowired
     private ClientRepository repository;
-
-    @Autowired
-    private Mapper mapper;
 
     @Autowired
     List<CreateValidation> createValidations;

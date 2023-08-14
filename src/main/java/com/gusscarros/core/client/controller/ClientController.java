@@ -1,9 +1,7 @@
 package com.gusscarros.core.client.controller;
 
-import com.gusscarros.core.client.dto.ClientPatchDto;
-import com.gusscarros.core.client.dto.ClientDto;
-import com.gusscarros.core.client.dto.request.ClientRequest;
-import com.gusscarros.core.client.dto.response.ClientResponse;
+import com.gusscarros.core.client.models.request.ClientRequest;
+import com.gusscarros.core.client.models.response.ClientResponse;
 import com.gusscarros.core.client.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController

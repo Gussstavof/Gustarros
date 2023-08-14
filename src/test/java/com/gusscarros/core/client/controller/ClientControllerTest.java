@@ -1,21 +1,16 @@
 package com.gusscarros.core.client.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gusscarros.core.client.dto.ClientPatchDto;
-import com.gusscarros.core.client.dto.ClientDto;
-import com.gusscarros.core.client.dto.Mapper;
-import com.gusscarros.core.client.dto.request.ClientRequest;
-import com.gusscarros.core.client.dto.response.ClientResponse;
+import com.gusscarros.core.client.models.request.ClientRequest;
+import com.gusscarros.core.client.models.response.ClientResponse;
 import com.gusscarros.core.client.exception.NotFoundException;
-import com.gusscarros.core.client.entity.Client;
+import com.gusscarros.core.client.models.entity.Client;
 import com.gusscarros.core.client.service.ClientService;
-import com.gusscarros.core.client.constraints.AgeValidation;
 import com.gusscarros.core.address.entity.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -45,64 +40,29 @@ class ClientControllerTest {
 
     @Autowired
     private ClientController clientController;
-
     @Autowired
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
-
     @MockBean
     ClientService clientService;
-
-    @Mock
-    Mapper mapper;
-
-    @Mock
-    AgeValidation ageValidation;
-
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     ObjectMapper objectMapper;
-
     Pageable pageable;
-
-    ClientDto clientDto;
-
     ClientRequest clientRequest;
-
     ClientResponse clientResponse;
-
     List<Client> clients;
-
-    ClientPatchDto clientPatchDto;
 
     @BeforeEach
     public void setup(){
-
         mockMvc = MockMvcBuilders
                 .standaloneSetup(clientController)
                 .setCustomArgumentResolvers(pageableArgumentResolver)
                 .build();
-
         Address address = Address.builder()
                 .cep("03245110")
                 .numero("277")
                 .build();
-
-        clientDto = ClientDto.builder()
-                .name("Ferreira")
-                .address(address)
-                .birthDate(LocalDate.parse("2003-11-12"))
-                .cpf("56040769025")
-                .creditCard("5245759559334078")
-                .gender("masculino")
-                .build();
-
-        clientPatchDto = ClientPatchDto.builder()
-                .cpf("56040769025")
-                .status(false)
-                .build();
-
         clients = Collections.singletonList(new Client()
                 .setName("Gustavo")
                 .setAddress(address)
@@ -110,7 +70,6 @@ class ClientControllerTest {
                 .setCpf("56040769025")
                 .setCreditCard("5245759559334078")
                 .setGender("Masculino"));
-
         clientRequest = ClientRequest.builder()
                 .name("Ferreira")
                 .address(address)
@@ -119,7 +78,6 @@ class ClientControllerTest {
                 .creditCard("5245759559334078")
                 .gender("masculino")
                 .build();
-
         clientResponse = ClientResponse.builder()
                 .name("Ferreira")
                 .address(address)
@@ -128,7 +86,6 @@ class ClientControllerTest {
                 .creditCard("5245759559334078")
                 .gender("masculino")
                 .build();
-
     }
 
 
@@ -143,7 +100,6 @@ class ClientControllerTest {
                        "cpf": "560.***.***-**"
                      }
                    """;
-
 
         mockMvc.perform(post("/clients")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -284,11 +240,13 @@ class ClientControllerTest {
     @Test
     @DisplayName("Delete_client_by_cpf_and_return_status_200")
     void deleteClientByCpf() throws Exception {
-        doNothing().when(clientService).clientDelete("56040769025");
+        doNothing()
+                .when(clientService)
+                .clientDelete("56040769025");
 
         mockMvc.perform(delete("/clients/56040769025")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientDto)))
+                        .content(objectMapper.writeValueAsString(clientRequest)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 

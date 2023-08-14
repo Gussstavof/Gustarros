@@ -1,13 +1,11 @@
 package com.gusscarros.core.client.service;
 
-import com.gusscarros.core.client.dto.*;
-import com.gusscarros.core.client.dto.request.ClientRequest;
-import com.gusscarros.core.client.dto.response.ClientResponse;
+import com.gusscarros.core.client.models.request.ClientRequest;
+import com.gusscarros.core.client.models.response.ClientResponse;
 import com.gusscarros.core.client.exception.NotFoundException;
-import com.gusscarros.core.client.entity.Client;
+import com.gusscarros.core.client.models.entity.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
 import com.gusscarros.core.client.validation.CreateValidation;
-import com.gusscarros.core.address.infra.AddressInfra;
 import com.gusscarros.core.address.entity.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,41 +26,19 @@ import java.util.Optional;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-
 @ExtendWith(SpringExtension.class)
 public class ClientServiceTest {
-
     @InjectMocks
     ClientService clientService;
-
-    @Mock
-    AddressInfra addressInfra;
-
     @Mock
     ClientRepository repository;
-
-    @Mock
-    Mapper mapper;
-
     @Mock
     List<CreateValidation> createValidations;
-
-    ClientDto clientDto;
-
     ClientRequest clientRequest;
-
     ClientResponse clientResponse;
-
-    ClientDto clientPutDto;
-
-    ClientPatchDto clientPatchDto;
-
     Client client;
-
     Address address;
-
     Address addressUpdate;
-
     Pageable pageable;
 
     @BeforeEach
@@ -76,22 +52,7 @@ public class ClientServiceTest {
                 .cep("03220100")
                 .numero("90")
                 .build();
-        clientDto = ClientDto.builder()
-                .name("Ferreira")
-                .address(address)
-                .birthDate(LocalDate.parse("2003-11-12"))
-                .cpf("56040769025")
-                .creditCard("5245759559334078")
-                .gender("masculino")
-                .build();
-        clientPutDto = ClientDto.builder()
-                .name("Gustavo")
-                .address(addressUpdate)
-                .birthDate(LocalDate.parse("2003-11-12"))
-                .cpf("56040769025")
-                .creditCard("5339474401406150")
-                .gender("masculino")
-                .build();
+
         client = Client.builder()
                 .id("1")
                 .name("Gustavo")
@@ -100,11 +61,6 @@ public class ClientServiceTest {
                 .cpf("56040769025")
                 .creditCard("5245759559334078")
                 .gender("masculino")
-                .build();
-
-        clientPatchDto = ClientPatchDto.builder()
-                .cpf("56040769025")
-                .status(false)
                 .build();
 
         clientRequest = ClientRequest.builder()
@@ -130,8 +86,6 @@ public class ClientServiceTest {
     public void saveClientTest(){
         when(repository.save(clientRequest.toClient()))
                 .thenReturn(client);
-        when(addressInfra.validationAdress(address))
-                .thenReturn(address);
         doNothing().when(createValidations)
                 .forEach(createValidation -> createValidation.validator(clientRequest));
 
@@ -250,9 +204,12 @@ public class ClientServiceTest {
                 .setCpf("56040769025")
                 .setCreditCard("5245759559334078")
                 .setGender("masculino");
+
         when(repository.findByCpf(client.getCpf()))
                 .thenReturn(Optional.of(client));
-        doNothing().when(repository).deleteById(client.getId());
+        doNothing()
+                .when(repository)
+                .deleteById(client.getId());
 
         clientService.clientDelete(client.getCpf());
         verify(repository).deleteById(client.getId());

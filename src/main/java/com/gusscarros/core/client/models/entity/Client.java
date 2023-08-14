@@ -1,4 +1,4 @@
-package com.gusscarros.core.client.entity;
+package com.gusscarros.core.client.models.entity;
 
 import com.gusscarros.core.client.constraints.AgeValidator;
 import com.gusscarros.core.address.entity.Address;

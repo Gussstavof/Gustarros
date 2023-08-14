@@ -1,19 +1,19 @@
-package com.gusscarros.core.client.dto.response;
+package com.gusscarros.core.client.models.request;
 
 import com.gusscarros.core.address.entity.Address;
-import com.gusscarros.core.client.entity.Client;
+import com.gusscarros.core.client.models.entity.Client;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDate;
 
+@Builder
 @Data
 @Accessors(chain = true)
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientResponse {
+public class ClientRequest {
     private String name;
     private String cpf;
     private LocalDate birthDate;
@@ -22,10 +22,9 @@ public class ClientResponse {
     private boolean status;
     private Address address;
 
-    public ClientResponse(Client client) {
-        BeanUtils.copyProperties(client, this);
-        this.cpf = client.getCpf().substring(0,3).concat(".***.***-**");
-        this.creditCard = client.getCreditCard().substring(12,16);
-
+    public Client toClient(){
+        Client client = new Client();
+        BeanUtils.copyProperties(this, client);
+        return client;
     }
 }

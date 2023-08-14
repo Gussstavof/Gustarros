@@ -1,7 +1,6 @@
 package com.gusscarros.core.client.validation;
 
-import com.gusscarros.core.client.dto.ClientDto;
-import com.gusscarros.core.client.dto.request.ClientRequest;
+import com.gusscarros.core.client.models.request.ClientRequest;
 import com.gusscarros.core.client.exception.CpfExistException;
 import com.gusscarros.core.client.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;

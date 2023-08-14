@@ -2,8 +2,7 @@ package com.gusscarros.core.client.validation;
 
 import com.gusscarros.core.address.entity.Address;
 import com.gusscarros.core.address.infra.AddressInfra;
-import com.gusscarros.core.client.dto.ClientDto;
-import com.gusscarros.core.client.dto.request.ClientRequest;
+import com.gusscarros.core.client.models.request.ClientRequest;
 import com.gusscarros.core.client.exception.InvalidAddressException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

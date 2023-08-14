@@ -1,6 +1,6 @@
 package com.gusscarros.core.client.repository;
 
-import com.gusscarros.core.client.entity.Client;
+import com.gusscarros.core.client.models.entity.Client;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
