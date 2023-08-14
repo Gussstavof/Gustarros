@@ -22,18 +22,13 @@ public class ClientService {
     private ClientRepository repository;
 
     @Autowired
-    private AddressInfra addressInfra;
-
-    @Autowired
     private Mapper mapper;
 
     @Autowired
     List<CreateValidation> createValidations;
 
     public String saveClient(ClientRequest clientRequest){
-        createValidations.forEach(
-                createValidation -> createValidation.validator(clientRequest)
-        );
+        check(clientRequest);
 
         Client client = repository.save(clientRequest.toClient());
 
@@ -58,13 +53,16 @@ public class ClientService {
         return clients.stream().map(ClientResponse::new).toList();
     }
 
-    public ClientDto clientUpdate(ClientDto clientDto, String cpf){
+    public ClientResponse clientUpdate(ClientRequest clientRequest, String cpf){
+
+        check(clientRequest);
+
         return repository.findByCpf(cpf).map(client -> {
-            client.setCreditCard(clientDto.getCreditCard());
-            client.setAddress(addressInfra.validationAdress(clientDto.getAddress()));
-            client.setName(clientDto.getName());
+            client.setCreditCard(clientRequest.getCreditCard());
+            client.setAddress(clientRequest.getAddress());
+            client.setName(clientRequest.getName());
             repository.save(client);
-            return mapper.toClientDto(client);
+            return new ClientResponse(client);
         }).orElseThrow(() -> new NotFoundException("Cpf not found"));
     }
 
@@ -81,6 +79,12 @@ public class ClientService {
 
     private Client findByCpfOrThrowNotFoundException(final String cpf){
         return repository.findByCpf(cpf).orElseThrow(() -> new NotFoundException("CPF not found"));
+    }
+
+    private void check(ClientRequest request){
+        createValidations.forEach(
+                createValidation -> createValidation.validator(request)
+        );
     }
 
 }

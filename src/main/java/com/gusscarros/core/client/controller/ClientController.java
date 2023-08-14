@@ -59,10 +59,12 @@ public class ClientController {
     }
 
     @PutMapping("/{cpf}")
-    public ResponseEntity<ClientDto> update(@Valid @RequestBody ClientDto clientDto,
+    public ResponseEntity<ClientResponse> update(@Valid @RequestBody ClientRequest clientRequest,
                                                @PathVariable String cpf
                                                ,URI uri){
-        return ResponseEntity.created(uri).body(clientService.clientUpdate(clientDto ,cpf));
+        return ResponseEntity
+                .created(uri)
+                .body(clientService.clientUpdate(clientRequest, cpf));
     }
 
     @PatchMapping("/{cpf}/{status}")

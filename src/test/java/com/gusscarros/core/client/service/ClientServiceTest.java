@@ -137,7 +137,7 @@ public class ClientServiceTest {
 
         var result = clientService.saveClient(clientRequest);
 
-        assertEquals(result, "560.***.***-**");
+        assertEquals("560.***.***-**", result);
     }
 
     @Test
@@ -163,9 +163,9 @@ public class ClientServiceTest {
        when(repository.findByCpf(cpf))
                .thenReturn(Optional.ofNullable(client));
 
-        var clientCpf = clientService.searchCpf("56040769025");
+        var result = clientService.searchCpf("56040769025");
 
-        assertEquals(clientCpf, clientResponse);
+        assertEquals(clientResponse, result);
     }
 
     @Test
@@ -199,20 +199,30 @@ public class ClientServiceTest {
 
     @Test
     public void updateClientTest(){
+
+        var clientPut = ClientRequest.builder()
+                .name("Gusstavo")
+                .address(addressUpdate)
+                .birthDate(LocalDate.parse("2003-11-12"))
+                .cpf("56040769025")
+                .creditCard("5245759559334078")
+                .gender("masculino")
+                .build();
+
+        clientResponse.setName("Gusstavo");
+        clientResponse.setAddress(addressUpdate);
+
         when(repository.findById(Mockito.any()))
                 .thenReturn(Optional.ofNullable(client));
         when(repository.findByCpf(Mockito.any()))
                 .thenReturn(Optional.ofNullable(client));
         when(repository.save(Mockito.any()))
                 .thenReturn(Mockito.any());
-        when(addressInfra.validationAdress(addressUpdate))
-                .thenReturn(addressUpdate);
-        when(mapper.toClientDto(client))
-                .thenReturn(clientPutDto);
 
-        var clientUpdate = clientService.clientUpdate(clientPutDto, "56040769025");
+        var result = clientService.clientUpdate(clientPut, "56040769025");
 
-        assertSame(clientUpdate, clientPutDto);
+        assertEquals(clientResponse, result);
+        assertInstanceOf(ClientResponse.class, result);
     }
 
     @Test

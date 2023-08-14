@@ -216,19 +216,19 @@ class ClientControllerTest {
     @Test
     @DisplayName("update_client_and_return_201")
     void update() throws Exception {
-        when(clientService.clientUpdate(clientDto, "56040769025"))
-                .thenReturn(clientDto);
+        when(clientService.clientUpdate(clientRequest, "56040769025"))
+                .thenReturn(clientResponse);
 
         mockMvc.perform(put("/clients/56040769025")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(clientDto)))
+                .content(objectMapper.writeValueAsString(clientRequest)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
     @Test
     @DisplayName("update_client_without_cpf_in_database_and_return_400")
     void updateCpfNotFound() throws Exception {
-        when(clientService.clientUpdate(clientDto, "56040769026"))
+        when(clientService.clientUpdate(clientRequest, "56040769026"))
                 .thenThrow(new NotFoundException("CPF not found"));
 
         mockMvc.perform(put("/clients/56040769026")
