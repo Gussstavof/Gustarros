@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gusscarros.core.client.dto.ClientPatchDto;
 import com.gusscarros.core.client.dto.ClientDto;
 import com.gusscarros.core.client.dto.Mapper;
+import com.gusscarros.core.client.dto.request.ClientRequest;
+import com.gusscarros.core.client.dto.response.ClientResponse;
 import com.gusscarros.core.client.exception.NotFoundException;
 import com.gusscarros.core.client.entity.Client;
 import com.gusscarros.core.client.service.ClientService;
@@ -109,13 +111,22 @@ class ClientControllerTest {
 
     @Test
     void save() throws Exception {
-        when(clientService.saveClient(clientDto))
-                .thenReturn(clientDto);
+        when(clientService.saveClient(any()))
+                .thenReturn("560.***.***-**");
+
+        String response = """
+                     {
+                       "message": "CREATED",
+                       "cpf": "560.***.***-**"
+                     }
+                   """;
+
 
         mockMvc.perform(post("/clients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(clientDto)))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.content().json(response));
     }
 
 

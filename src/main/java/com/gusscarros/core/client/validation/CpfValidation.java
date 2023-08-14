@@ -1,6 +1,7 @@
 package com.gusscarros.core.client.validation;
 
 import com.gusscarros.core.client.dto.ClientDto;
+import com.gusscarros.core.client.dto.request.ClientRequest;
 import com.gusscarros.core.client.exception.CpfExistException;
 import com.gusscarros.core.client.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,8 @@ public class CpfValidation implements CreateValidation {
     ClientRepository clientRepository;
 
     @Override
-    public void validator(ClientDto clientDto) {
-        if (clientRepository.existsByCpf(clientDto.getCpf())){
+    public void validator(ClientRequest clientRequest) {
+        if (clientRepository.existsByCpf(clientRequest.getCpf())){
          throw new CpfExistException("Cpf already exist");
         }
     }

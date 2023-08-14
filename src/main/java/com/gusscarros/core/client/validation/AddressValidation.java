@@ -1,6 +1,7 @@
 package com.gusscarros.core.client.validation;
 
 import com.gusscarros.core.client.dto.ClientDto;
+import com.gusscarros.core.client.dto.request.ClientRequest;
 import com.gusscarros.core.client.exception.InvalidAddressException;
 import com.gusscarros.core.address.infra.AddressInfra;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,11 @@ public class AddressValidation implements CreateValidation {
     AddressInfra addressInfra;
 
     @Override
-    public void validator(ClientDto clientDto) {
-       Optional.ofNullable((addressInfra.validationAdress(clientDto.getAddress())))
+    public void validator(ClientRequest clientRequest) {
+
+       Optional.ofNullable((clientRequest
+                       .setAddress(addressInfra.validationAdress(clientRequest.getAddress())))
+               )
                .orElseThrow(() -> new InvalidAddressException("CEP invalid"));
     }
 }

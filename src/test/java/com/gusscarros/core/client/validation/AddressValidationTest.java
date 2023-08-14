@@ -3,6 +3,7 @@ package com.gusscarros.core.client.validation;
 import com.gusscarros.core.address.entity.Address;
 import com.gusscarros.core.address.infra.AddressInfra;
 import com.gusscarros.core.client.dto.ClientDto;
+import com.gusscarros.core.client.dto.request.ClientRequest;
 import com.gusscarros.core.client.exception.InvalidAddressException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class AddressValidationTest {
     AddressInfra addressInfra;
 
     Address address;
-    ClientDto clientDto;
+    ClientRequest clientRequest;
 
     @BeforeEach
     public void setup(){
@@ -34,7 +35,7 @@ class AddressValidationTest {
                 .cep("03245")
                 .numero("277")
                 .build();
-        clientDto = ClientDto.builder()
+        clientRequest = ClientRequest.builder()
                 .name("Ferreira")
                 .address(address)
                 .birthDate(LocalDate.parse("2003-11-12"))
@@ -50,6 +51,6 @@ class AddressValidationTest {
                 .thenThrow(new InvalidAddressException("CEP invalid"));
 
         assertThrows(InvalidAddressException.class,
-                () -> addressValidation.validator(clientDto) );
+                () -> addressValidation.validator(clientRequest) );
     }
 }

@@ -1,6 +1,8 @@
 package com.gusscarros.core.client.service;
 
 import com.gusscarros.core.client.dto.*;
+import com.gusscarros.core.client.dto.request.ClientRequest;
+import com.gusscarros.core.client.dto.response.ClientResponse;
 import com.gusscarros.core.client.exception.NotFoundException;
 import com.gusscarros.core.client.entity.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
@@ -28,9 +30,14 @@ public class ClientService {
     @Autowired
     List<CreateValidation> createValidations;
 
-    public ClientDto saveClient(ClientDto clientDto){
-        createValidations.forEach(createValidation -> createValidation.validator(clientDto));
-        return mapper.toClientDto(repository.save(mapper.toClient(clientDto)));
+    public String saveClient(ClientRequest clientRequest){
+        createValidations.forEach(
+                createValidation -> createValidation.validator(clientRequest)
+        );
+
+        Client client = repository.save(clientRequest.toClient());
+
+        return new ClientResponse(client).getCpf();
     }
 
     public Page<ClientDto> allClient(Pageable pageable){
@@ -50,7 +57,6 @@ public class ClientService {
     }
 
     public ClientDto clientUpdate(ClientDto clientDto, String cpf){
-
         return repository.findByCpf(cpf).map(client -> {
             client.setCreditCard(clientDto.getCreditCard());
             client.setAddress(addressInfra.validationAdress(clientDto.getAddress()));
@@ -58,8 +64,6 @@ public class ClientService {
             repository.save(client);
             return mapper.toClientDto(client);
         }).orElseThrow(() -> new NotFoundException("Cpf not found"));
-
-
     }
 
     public ClientPatchDto clientUpdateStatus(boolean status, String cpf){

@@ -1,21 +1,21 @@
 package com.gusscarros.core.client.constraints;
 
+import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+
 import java.time.LocalDate;
 import java.time.Period;
 
 @Component
 public class AgeValidation implements ConstraintValidator<AgeValidator, LocalDate > {
 
-
     private int calculatorAge(LocalDate birthDate){
         LocalDate localDate  = LocalDate.now();
-        Period period = Period.between(birthDate, localDate);
-        return period.getYears();
-
+        return Period.
+                between(birthDate, localDate)
+                .getYears();
     }
 
     @Override

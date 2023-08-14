@@ -3,6 +3,7 @@ package com.gusscarros.core.client.validation;
 import com.gusscarros.core.address.entity.Address;
 import com.gusscarros.core.address.infra.AddressInfra;
 import com.gusscarros.core.client.dto.ClientDto;
+import com.gusscarros.core.client.dto.request.ClientRequest;
 import com.gusscarros.core.client.exception.CpfExistException;
 import com.gusscarros.core.client.exception.InvalidAddressException;
 import com.gusscarros.core.client.repository.ClientRepository;
@@ -28,7 +29,7 @@ class CpfValidationTest {
     ClientRepository clientRepository;
 
     Address address;
-    ClientDto clientDto;
+    ClientRequest clientRequest;
 
     @BeforeEach
     public void setup(){
@@ -36,7 +37,7 @@ class CpfValidationTest {
                 .cep("03245")
                 .numero("277")
                 .build();
-        clientDto = ClientDto.builder()
+        clientRequest = ClientRequest.builder()
                 .name("Ferreira")
                 .address(address)
                 .birthDate(LocalDate.parse("2003-11-12"))
@@ -52,6 +53,6 @@ class CpfValidationTest {
                 .thenThrow(new CpfExistException("Cpf already exist"));
 
         assertThrows(CpfExistException.class,
-                () -> cpfValidation.validator(clientDto) );
+                () -> cpfValidation.validator(clientRequest) );
     }
 }

@@ -1,6 +1,8 @@
 package com.gusscarros.core.client.service;
 
 import com.gusscarros.core.client.dto.*;
+import com.gusscarros.core.client.dto.request.ClientRequest;
+import com.gusscarros.core.client.dto.response.ClientResponse;
 import com.gusscarros.core.client.exception.NotFoundException;
 import com.gusscarros.core.client.entity.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
@@ -46,6 +48,10 @@ public class ClientServiceTest {
     List<CreateValidation> createValidations;
 
     ClientDto clientDto;
+
+    ClientRequest clientRequest;
+
+    ClientResponse clientResponse;
 
     ClientDto clientPutDto;
 
@@ -105,23 +111,38 @@ public class ClientServiceTest {
                 .cpf("56040769025")
                 .status(false)
                 .build();
+
+        clientRequest = ClientRequest.builder()
+                .name("Ferreira")
+                .address(address)
+                .birthDate(LocalDate.parse("2003-11-12"))
+                .cpf("56040769025")
+                .creditCard("5245759559334078")
+                .gender("masculino")
+                .build();
+
+        clientResponse = ClientResponse.builder()
+                .name("Ferreira")
+                .address(address)
+                .birthDate(LocalDate.parse("2003-11-12"))
+                .cpf("56040769025")
+                .creditCard("5245759559334078")
+                .gender("masculino")
+                .build();;
     }
 
     @Test
     public void saveClientTest(){
-        clientService.saveClient(clientDto);
-        when(repository.save(client))
+        when(repository.save(clientRequest.toClient()))
                 .thenReturn(client);
         when(addressInfra.validationAdress(address))
                 .thenReturn(address);
-        when(mapper.toClientDto(client))
-                .thenReturn(clientDto);
-        when(mapper.toClient(clientDto))
-                .thenReturn(client);
         doNothing().when(createValidations)
-                .forEach(createValidation -> createValidation.validator(clientDto));
-        var result = clientService.saveClient(clientDto);
-        assertSame( result, clientDto);
+                .forEach(createValidation -> createValidation.validator(clientRequest));
+
+        var result = clientService.saveClient(clientRequest);
+
+        assertEquals(result, "560.***.***-**");
     }
 
     @Test
