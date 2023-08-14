@@ -66,11 +66,11 @@ public class ClientService {
         }).orElseThrow(() -> new NotFoundException("Cpf not found"));
     }
 
-    public ClientPatchDto clientUpdateStatus(boolean status, String cpf){
-        var client = findByCpfOrThrowNotFoundException(cpf);
+    public ClientResponse clientUpdateStatus(boolean status, String cpf){
+        Client client = findByCpfOrThrowNotFoundException(cpf);
         client.setStatus(status);
         repository.save(client);
-        return mapper.cpfAndStatus(client);
+        return new ClientResponse(client);
     }
 
     public void clientDelete(String cpf) {

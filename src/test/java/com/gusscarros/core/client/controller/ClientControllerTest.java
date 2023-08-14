@@ -124,7 +124,7 @@ class ClientControllerTest {
                 .name("Ferreira")
                 .address(address)
                 .birthDate(LocalDate.parse("2003-11-12"))
-                .cpf("56040769025")
+                .cpf("560.***.***-**")
                 .creditCard("5245759559334078")
                 .gender("masculino")
                 .build();
@@ -242,11 +242,11 @@ class ClientControllerTest {
     @DisplayName("change_client's_status_to_false_and_return_status_200")
     void updateStatus() throws Exception {
         when(clientService.clientUpdateStatus(false,"56040769025"))
-                .thenReturn(clientPatchDto);
+                .thenReturn(clientResponse);
 
         mockMvc.perform(patch("/clients/56040769025/false")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientPatchDto)))
+                        .content(objectMapper.writeValueAsString(null)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -258,7 +258,7 @@ class ClientControllerTest {
 
         mockMvc.perform(patch("/clients/00000/false")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientPatchDto)))
+                        .content(objectMapper.writeValueAsString(null)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -266,11 +266,19 @@ class ClientControllerTest {
     @DisplayName("Search_client_by_cpf_and_change_client's_status_to_false")
     void updateStatusChange() throws Exception {
         when(clientService.clientUpdateStatus(false, "56040769025"))
-                .thenReturn(clientPatchDto);
+                .thenReturn(clientResponse);
+
+        String response = """
+                     {
+                       "cpf": "560.***.***-**",
+                       "status": "false"
+                     }
+                   """;
+
         mockMvc.perform(patch("/clients/56040769025/false")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientPatchDto)))
-                .andExpect(MockMvcResultMatchers.content().string("{\"status\":false,\"cpf\":\"56040769025\"}"));
+                        .content(objectMapper.writeValueAsString(null)))
+                .andExpect(MockMvcResultMatchers.content().json(response));
     }
 
     @Test

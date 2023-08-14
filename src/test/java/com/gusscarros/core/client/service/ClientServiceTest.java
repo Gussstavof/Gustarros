@@ -227,18 +227,17 @@ public class ClientServiceTest {
 
     @Test
     public void updateStatusTest(){
+
         doReturn(Optional.ofNullable(client))
                 .when(repository)
                 .findByCpf("56040769025");
         when(repository.save(Mockito.any()))
                 .thenReturn(client);
-        doReturn(clientPatchDto)
-                .when(mapper)
-                .cpfAndStatus(client);
 
-        var clientStatus = clientService.clientUpdateStatus(false,"56040769025");
+        var result = clientService.clientUpdateStatus(false,"56040769025");
 
-        assertFalse(clientStatus.isStatus());
+        assertFalse(result.isStatus());
+        assertEquals(clientResponse.getName(), result.getName());
     }
 
     @Test

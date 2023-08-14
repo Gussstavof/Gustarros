@@ -62,15 +62,27 @@ public class ClientController {
     public ResponseEntity<ClientResponse> update(@Valid @RequestBody ClientRequest clientRequest,
                                                @PathVariable String cpf
                                                ,URI uri){
-        return ResponseEntity
-                .created(uri)
+        return ResponseEntity.created(uri)
                 .body(clientService.clientUpdate(clientRequest, cpf));
     }
 
-    @PatchMapping("/{cpf}/{status}")
-    public ResponseEntity<ClientPatchDto> updateStatus(@PathVariable boolean status,
+    @PatchMapping(path = "/{cpf}/{status}", produces = MediaType.APPLICATION_JSON_VALUE )
+    public ResponseEntity<String> updateStatus(@PathVariable boolean status,
                                                        @PathVariable String cpf){
-        return ResponseEntity.ok(clientService.clientUpdateStatus(status, cpf));
+        ClientResponse response = clientService.clientUpdateStatus(status, cpf);
+
+        return ResponseEntity
+                .ok(String.format(
+                        """
+                                 {
+                                      "cpf": "%s",
+                                      "status": "%s"
+                                 }
+                                """
+                        , response.getCpf()
+                        , response.isStatus()
+                        )
+                );
     }
 
     @DeleteMapping("/{cpf}")
