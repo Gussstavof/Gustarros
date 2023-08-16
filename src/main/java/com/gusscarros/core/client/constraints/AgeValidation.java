@@ -9,10 +9,10 @@ import java.time.LocalDate;
 import java.time.Period;
 
 @Component
-public class AgeValidation implements ConstraintValidator<AgeValidator, LocalDate > {
+public class AgeValidation implements ConstraintValidator<AgeValidator, LocalDate> {
 
-    private int calculatorAge(LocalDate birthDate){
-        LocalDate localDate  = LocalDate.now();
+    private int calculatorAge(LocalDate birthDate) {
+        LocalDate localDate = LocalDate.now();
         return Period.
                 between(birthDate, localDate)
                 .getYears();

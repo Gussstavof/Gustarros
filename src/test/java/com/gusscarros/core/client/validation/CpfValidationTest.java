@@ -18,13 +18,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 class CpfValidationTest {
-
     @InjectMocks
     CpfValidation cpfValidation;
-
     @Mock
     ClientRepository clientRepository;
-
     Address address;
     ClientRequest clientRequest;
 

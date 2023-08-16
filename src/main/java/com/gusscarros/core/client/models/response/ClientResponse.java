@@ -11,7 +11,6 @@ import java.time.LocalDate;
 @Data
 @Accessors(chain = true)
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class ClientResponse {
     private String name;
@@ -24,8 +23,8 @@ public class ClientResponse {
 
     public ClientResponse(Client client) {
         BeanUtils.copyProperties(client, this);
-        this.cpf = client.getCpf().substring(0,3).concat(".***.***-**");
-        this.creditCard = client.getCreditCard().substring(12,16);
+        this.cpf = client.getCpf().substring(0, 3).concat(".***.***-**");
+        this.creditCard = client.getCreditCard().substring(12, 16);
 
     }
 }

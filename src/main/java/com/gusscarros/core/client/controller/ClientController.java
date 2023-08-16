@@ -25,7 +25,7 @@ public class ClientController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> save(@Valid @RequestBody ClientRequest clientRequest, URI location) {
-        String response = clientService.saveClient(clientRequest);
+        String response = clientService.save(clientRequest);
 
         return ResponseEntity
                 .created(location)
@@ -42,17 +42,17 @@ public class ClientController {
 
     @GetMapping("/all")
     public ResponseEntity<Page<ClientResponse>> getAll(@PageableDefault(sort = "{name}") Pageable pageable){
-        return ResponseEntity.ok(clientService.allClient(pageable));
+        return ResponseEntity.ok(clientService.getAll(pageable));
     }
 
     @GetMapping("/searchname")
     public ResponseEntity<List<ClientResponse> >findByName(@RequestParam("name") String name){
-        return ResponseEntity.ok(clientService.searchName(name));
+        return ResponseEntity.ok(clientService.searchByName(name));
     }
 
     @GetMapping("/searchcpf")
     public ResponseEntity<ClientResponse> findByCpf(@RequestParam("cpf") String cpf){
-        return ResponseEntity.ok(clientService.searchCpf(cpf));
+        return ResponseEntity.ok(clientService.searchByCpf(cpf));
     }
 
     @PutMapping("/{cpf}")
@@ -60,13 +60,13 @@ public class ClientController {
                                                @PathVariable String cpf
                                                ,URI uri){
         return ResponseEntity.created(uri)
-                .body(clientService.clientUpdate(clientRequest, cpf));
+                .body(clientService.update(clientRequest, cpf));
     }
 
     @PatchMapping(path = "/{cpf}/{status}", produces = MediaType.APPLICATION_JSON_VALUE )
     public ResponseEntity<String> updateStatus(@PathVariable boolean status,
                                                        @PathVariable String cpf){
-        ClientResponse response = clientService.clientUpdateStatus(status, cpf);
+        ClientResponse response = clientService.updateStatus(status, cpf);
 
         return ResponseEntity
                 .ok(String.format(
@@ -84,7 +84,7 @@ public class ClientController {
 
     @DeleteMapping("/{cpf}")
     public void delete(@PathVariable String cpf){
-        clientService.clientDelete(cpf);
+        clientService.deleteByCpf(cpf);
     }
 
 

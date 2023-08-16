@@ -9,15 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClientRepository extends MongoRepository<Client, String> {
-
     List<Client> findByNameContains(String name);
-
     Optional<Client> findByCpf(String cpf);
-
-    void deleteByCpf(String cpf);
-
     boolean existsByCpf(String cpf);
-
     Page<Client> findByStatusTrue(Pageable pageable);
 
 }

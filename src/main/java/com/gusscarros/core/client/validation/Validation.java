@@ -4,6 +4,6 @@ import com.gusscarros.core.client.models.request.ClientRequest;
 import org.springframework.stereotype.Component;
 
 @Component
-public interface CreateValidation {
+public interface Validation {
      void validator(ClientRequest clientRequest);
 }

@@ -22,7 +22,7 @@ public class ClientRequest {
     private boolean status;
     private Address address;
 
-    public Client toClient(){
+    public Client toClient() {
         Client client = new Client();
         BeanUtils.copyProperties(this, client);
         return client;

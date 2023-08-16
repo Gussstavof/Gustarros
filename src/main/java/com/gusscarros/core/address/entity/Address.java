@@ -12,7 +12,6 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Address {
-
     private String cep;
     private String uf;
     private String localidade;

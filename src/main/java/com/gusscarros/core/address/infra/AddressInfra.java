@@ -1,16 +1,16 @@
 package com.gusscarros.core.address.infra;
 
 import com.gusscarros.core.address.entity.Address;
+import com.gusscarros.core.address.repositories.AddressHTTPRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 
 @Service
-public class AddressInfra {
-
-    public Address validationAdress(Address address){
+public class AddressInfra implements AddressHTTPRepository {
+    public Address validationAddress(Address address){
         String number = address.getNumero();
-        address = restEndereco(address.getCep());
+        address = restTemplateAddress(address.getCep());
         if (address.getLogradouro() == null){
             return null;
         }
@@ -19,8 +19,7 @@ public class AddressInfra {
         return address;
     }
 
-
-     private Address restEndereco(final String cep){
+     private Address restTemplateAddress(final String cep){
         RestTemplate restTemplate = new RestTemplate();
          return restTemplate.getForObject("http://viacep.com.br/ws/"+cep+"/json/",
                  Address.class);

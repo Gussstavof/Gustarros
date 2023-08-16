@@ -5,7 +5,7 @@ import com.gusscarros.core.client.models.response.ClientResponse;
 import com.gusscarros.core.client.exception.NotFoundException;
 import com.gusscarros.core.client.models.entity.Client;
 import com.gusscarros.core.client.repository.ClientRepository;
-import com.gusscarros.core.client.validation.CreateValidation;
+import com.gusscarros.core.client.validation.Validation;
 import com.gusscarros.core.address.entity.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ public class ClientServiceTest {
     @Mock
     ClientRepository repository;
     @Mock
-    List<CreateValidation> createValidations;
+    List<Validation> createValidations;
     ClientRequest clientRequest;
     ClientResponse clientResponse;
     Client client;
@@ -89,7 +89,7 @@ public class ClientServiceTest {
         doNothing().when(createValidations)
                 .forEach(createValidation -> createValidation.validator(clientRequest));
 
-        var result = clientService.saveClient(clientRequest);
+        var result = clientService.save(clientRequest);
 
         assertEquals("560.***.***-**", result);
     }
@@ -101,7 +101,7 @@ public class ClientServiceTest {
         when(repository.findByStatusTrue(pageable))
                 .thenReturn(clients);
 
-        var result = clientService.allClient(pageable);
+        var result = clientService.getAll(pageable);
 
         assertInstanceOf(Page.class, result);
         assertTrue(result.stream()
@@ -117,7 +117,7 @@ public class ClientServiceTest {
        when(repository.findByCpf(cpf))
                .thenReturn(Optional.ofNullable(client));
 
-        var result = clientService.searchCpf("56040769025");
+        var result = clientService.searchByCpf("56040769025");
 
         assertEquals(clientResponse, result);
     }
@@ -128,7 +128,7 @@ public class ClientServiceTest {
                 .thenThrow(new NotFoundException("CPF not found"));
 
         assertThrows(NotFoundException.class,
-                () -> clientService.searchCpf("00000000000"));
+                () -> clientService.searchByCpf("00000000000"));
     }
 
     @Test
@@ -137,7 +137,7 @@ public class ClientServiceTest {
         when(repository.findByNameContains("Fer")).
                 thenReturn(List.of(client));
 
-        var clientName = clientService.searchName("Fer");
+        var clientName = clientService.searchByName("Fer");
 
         assertTrue(clientName.contains(clientResponse));
     }
@@ -148,7 +148,7 @@ public class ClientServiceTest {
                 .thenThrow(new NotFoundException("Name not found"));
 
         assertThrows(NotFoundException.class,
-                () -> clientService.searchName("Gus"));
+                () -> clientService.searchByName("Gus"));
     }
 
     @Test
@@ -166,6 +166,9 @@ public class ClientServiceTest {
         clientResponse.setName("Gusstavo");
         clientResponse.setAddress(addressUpdate);
 
+        doNothing()
+                .when(createValidations)
+                .forEach(createValidation -> createValidation.validator(clientRequest));
         when(repository.findById(Mockito.any()))
                 .thenReturn(Optional.ofNullable(client));
         when(repository.findByCpf(Mockito.any()))
@@ -173,7 +176,7 @@ public class ClientServiceTest {
         when(repository.save(Mockito.any()))
                 .thenReturn(Mockito.any());
 
-        var result = clientService.clientUpdate(clientPut, "56040769025");
+        var result = clientService.update(clientPut, "56040769025");
 
         assertEquals(clientResponse, result);
         assertInstanceOf(ClientResponse.class, result);
@@ -188,7 +191,7 @@ public class ClientServiceTest {
         when(repository.save(Mockito.any()))
                 .thenReturn(client);
 
-        var result = clientService.clientUpdateStatus(false,"56040769025");
+        var result = clientService.updateStatus(false,"56040769025");
 
         assertFalse(result.isStatus());
         assertEquals(clientResponse.getName(), result.getName());
@@ -211,7 +214,7 @@ public class ClientServiceTest {
                 .when(repository)
                 .deleteById(client.getId());
 
-        clientService.clientDelete(client.getCpf());
+        clientService.deleteByCpf(client.getCpf());
         verify(repository).deleteById(client.getId());
     }
 }

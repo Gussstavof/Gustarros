@@ -2,6 +2,7 @@ package com.gusscarros.core.client.validation;
 
 import com.gusscarros.core.address.entity.Address;
 import com.gusscarros.core.address.infra.AddressInfra;
+import com.gusscarros.core.address.repositories.AddressHTTPRepository;
 import com.gusscarros.core.client.models.request.ClientRequest;
 import com.gusscarros.core.client.exception.InvalidAddressException;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +24,7 @@ class AddressValidationTest {
     AddressValidation addressValidation;
 
     @Mock
-    AddressInfra addressInfra;
+    AddressHTTPRepository addressHTTPRepository;
 
     Address address;
     ClientRequest clientRequest;
@@ -46,7 +47,7 @@ class AddressValidationTest {
 
     @Test
     void validator() {
-        when(addressInfra.validationAdress(address))
+        when(addressHTTPRepository.validationAddress(address))
                 .thenThrow(new InvalidAddressException("CEP invalid"));
 
         assertThrows(InvalidAddressException.class,

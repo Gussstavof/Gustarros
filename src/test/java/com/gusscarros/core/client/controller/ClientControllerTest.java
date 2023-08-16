@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gusscarros.core.client.models.request.ClientRequest;
 import com.gusscarros.core.client.models.response.ClientResponse;
 import com.gusscarros.core.client.exception.NotFoundException;
-import com.gusscarros.core.client.models.entity.Client;
 import com.gusscarros.core.client.service.ClientService;
 import com.gusscarros.core.address.entity.Address;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,10 +50,9 @@ class ClientControllerTest {
     Pageable pageable;
     ClientRequest clientRequest;
     ClientResponse clientResponse;
-    List<Client> clients;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(clientController)
                 .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -63,13 +61,6 @@ class ClientControllerTest {
                 .cep("03245110")
                 .numero("277")
                 .build();
-        clients = Collections.singletonList(new Client()
-                .setName("Gustavo")
-                .setAddress(address)
-                .setBirthDate(LocalDate.parse("2003-11-12"))
-                .setCpf("56040769025")
-                .setCreditCard("5245759559334078")
-                .setGender("Masculino"));
         clientRequest = ClientRequest.builder()
                 .name("Ferreira")
                 .address(address)
@@ -91,15 +82,15 @@ class ClientControllerTest {
 
     @Test
     void save() throws Exception {
-        when(clientService.saveClient(any()))
+        when(clientService.save(any()))
                 .thenReturn("560.***.***-**");
 
         String response = """
-                     {
-                       "message": "CREATED",
-                       "cpf": "560.***.***-**"
-                     }
-                   """;
+                  {
+                    "message": "CREATED",
+                    "cpf": "560.***.***-**"
+                  }
+                """;
 
         mockMvc.perform(post("/clients")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -112,7 +103,7 @@ class ClientControllerTest {
     @Test
     @DisplayName("Get_clients_when_status_is_true_and_return_status_200")
     void getAll() throws Exception {
-        when(clientService.allClient(pageable))
+        when(clientService.getAll(pageable))
                 .thenReturn(new PageImpl<>(Collections.singletonList(clientResponse)));
 
         mockMvc.perform(get("/clients/all")
@@ -123,20 +114,21 @@ class ClientControllerTest {
 
     @Test
     @DisplayName("Search_client_by_name_and_return_status_200")
-    void findByName() throws Exception{
+    void findByName() throws Exception {
         doReturn(List.of(clientResponse))
                 .when(clientService)
-                .searchName("Gustavo");
+                .searchByName("Gustavo");
 
         mockMvc.perform(get("/clients/searchname?name=Gustavo")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(List.of(clientResponse))))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
+
     @Test
     @DisplayName("Throw_exception_NameNotFound")
-    void NameNotFound() throws Exception{
-        when(clientService.searchName(Mockito.any()))
+    void NameNotFound() throws Exception {
+        when(clientService.searchByName(Mockito.any()))
                 .thenThrow(new NotFoundException("Name not found"));
 
         mockMvc.perform(get("/clients/searchname?name=")
@@ -147,8 +139,8 @@ class ClientControllerTest {
 
     @Test
     @DisplayName("Search_client_by_cpf_and_return_status_200")
-    void findByCpf() throws Exception{
-        when(clientService.searchCpf("56040769025"))
+    void findByCpf() throws Exception {
+        when(clientService.searchByCpf("56040769025"))
                 .thenReturn(clientResponse);
 
         mockMvc.perform(get("/clients/searchcpf?cpf=56040769025")
@@ -159,8 +151,8 @@ class ClientControllerTest {
 
     @Test
     @DisplayName("search_Throw_exception_CpfNotFound")
-    void cpfNotFound() throws Exception{
-        when(clientService.searchCpf(Mockito.any()))
+    void cpfNotFound() throws Exception {
+        when(clientService.searchByCpf(Mockito.any()))
                 .thenThrow(new NotFoundException("CPF not found"));
 
         mockMvc.perform(get("/clients/searchcpf?cpf=")
@@ -172,24 +164,24 @@ class ClientControllerTest {
     @Test
     @DisplayName("update_client_and_return_201")
     void update() throws Exception {
-        when(clientService.clientUpdate(clientRequest, "56040769025"))
+        when(clientService.update(clientRequest, "56040769025"))
                 .thenReturn(clientResponse);
 
         mockMvc.perform(put("/clients/56040769025")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(clientRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clientRequest)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
     @Test
     @DisplayName("update_client_without_cpf_in_database_and_return_400")
     void updateCpfNotFound() throws Exception {
-        when(clientService.clientUpdate(clientRequest, "56040769026"))
+        when(clientService.update(clientRequest, "56040769026"))
                 .thenThrow(new NotFoundException("CPF not found"));
 
         mockMvc.perform(put("/clients/56040769026")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(null)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(null)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -197,7 +189,7 @@ class ClientControllerTest {
     @Test
     @DisplayName("change_client's_status_to_false_and_return_status_200")
     void updateStatus() throws Exception {
-        when(clientService.clientUpdateStatus(false,"56040769025"))
+        when(clientService.updateStatus(false, "56040769025"))
                 .thenReturn(clientResponse);
 
         mockMvc.perform(patch("/clients/56040769025/false")
@@ -209,7 +201,7 @@ class ClientControllerTest {
     @Test
     @DisplayName("update_Throw_exception_CpfNotFound")
     void updateStatusCpfNotFound() throws Exception {
-        when(clientService.clientUpdateStatus(Boolean.parseBoolean(Mockito.any()),Mockito.any()))
+        when(clientService.updateStatus(Boolean.parseBoolean(Mockito.any()), Mockito.any()))
                 .thenThrow(new NotFoundException("CPF not found"));
 
         mockMvc.perform(patch("/clients/00000/false")
@@ -221,15 +213,15 @@ class ClientControllerTest {
     @Test
     @DisplayName("Search_client_by_cpf_and_change_client's_status_to_false")
     void updateStatusChange() throws Exception {
-        when(clientService.clientUpdateStatus(false, "56040769025"))
+        when(clientService.updateStatus(false, "56040769025"))
                 .thenReturn(clientResponse);
 
         String response = """
-                     {
-                       "cpf": "560.***.***-**",
-                       "status": "false"
-                     }
-                   """;
+                  {
+                    "cpf": "560.***.***-**",
+                    "status": "false"
+                  }
+                """;
 
         mockMvc.perform(patch("/clients/56040769025/false")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -242,7 +234,7 @@ class ClientControllerTest {
     void deleteClientByCpf() throws Exception {
         doNothing()
                 .when(clientService)
-                .clientDelete("56040769025");
+                .deleteByCpf("56040769025");
 
         mockMvc.perform(delete("/clients/56040769025")
                         .contentType(MediaType.APPLICATION_JSON)
